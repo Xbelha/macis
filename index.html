@@ -1,10 +1,46 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+  <!-- Font Awesome for social media icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Bäckerei Leipzig – Frische & Genuss</title>
   <style>
+    .social-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background-color: #222;
+  color: white;
+  border-radius: 50%;
+  text-decoration: none;
+  font-size: 20px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.social-icon:hover {
+  transform: scale(1.1);
+}
+
+.instagram:hover {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+}
+
+.facebook:hover {
+  background-color: #3b5998;
+}
+
     body {
       font-family: 'Georgia', serif;
       margin: 0;
@@ -173,6 +209,15 @@
   </div>
 
   <footer>
+    <div class="social-buttons">
+  <a href="https://www.instagram.com/YOUR_USERNAME" target="_blank" class="social-icon instagram">
+    <i class="fab fa-instagram"></i>
+  </a>
+  <a href="https://www.facebook.com/YOUR_USERNAME" target="_blank" class="social-icon facebook">
+    <i class="fab fa-facebook-f"></i>
+  </a>
+</div>
+
     Demo Bäckerei Website &copy; 2025 – Mit Liebe gebacken
   </footer>
 
@@ -211,11 +256,11 @@
       const mail = `mailto:${currentLang==='de' ? 'bestellung@baeckerei.de' : 'order@bakery.de'}?subject=${encodeURIComponent((currentLang==='de'?'Bestellung: ':'Order: ') + (currentLang==='de' ? p.name_de : p.name_en))}`;
       document.getElementById('orderLink').href = mail;
       document.getElementById('orderLink').textContent = currentLang==='de' ? 'Hier bestellen' : 'Order Now';
-      document.getElementById('modal').style.display = 'flex';
+      document.getElementById('modal')..display = 'flex';
     }
 
     function closeModal() {
-      document.getElementById('modal').style.display = 'none';
+      document.getElementById('modal')..display = 'none';
     }
 
     function toggleLang() {
