@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bäckerei Leipzig – Frische & Genuss</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --main-bg: #fdf6f0;
+      --text-color: #4e342e;
+      --accent-color: #a1887f;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+	
+      font-family: 'Georgia', serif;
+      margin: 0;
+      background: var(--main-bg);
+      color: var(--text-color);
+    }
+    header {
+      background: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1600&q=80') center/cover;
+      color: white;
+      text-align: center;
+      padding: 120px 20px;
+      background-blend-mode: overlay;
+      background-color: rgba(0,0,0,0.35);
+    }
+    header img {
+      width: 200px;
+      margin-bottom: 20px;
+    }
+    header h1 {
+      font-size: 3.5rem;
+      margin-bottom: 10px;
+      text-shadow: 0 3px 6px rgba(0,0,0,0.4);
+    }
+    header p {
+      font-size: 1.3rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      margin-bottom: 20px;
+    }
+    header .order-btn {
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      padding: 15px 25px;
+      font-size: 1.1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: background 0.3s ease;
+    }
+    header .order-btn:hover {
+      background: #8d6e63;
+    }
+    .lang-switch {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 100;
+      transition: background 0.3s ease;
+    }
+    .lang-switch:hover {
+      background: #8d6e63;
+    }
+    .products {
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+    .product {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px var(--shadow);
+      overflow: hidden;
+      transition: transform 0.3s;
+      cursor: pointer;
+    }
+    .product:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+    .product img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+    .product-info {
+      padding: 20px;
+      text-align: center;
+    }
+    .product-info h3 {
+      margin: 0 0 10px;
+      color: #6d4c41;
+      font-size: 1.4rem;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+	
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 500px;
+      text-align: center;
+      position: relative;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #888;
+    }
+    .order-link {
+      display: inline-block;
+      margin-top: 15px;
+      background: #6d4c41;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .order-link:hover {
+      background: #5d4037;
+    }
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      background: #f1e4da;
+      font-size: 0.95rem;
+    }
+    .social-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .social-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background-color: var(--text-color);
+      color: white;
+      border-radius: 50%;
+      text-decoration: none;
+      font-size: 20px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .social-icon:hover {
+      transform: scale(1.1);
+    }
+    .social-icon.instagram:hover {
+      background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+    }
+    .social-icon.facebook:hover {
+      background-color: #3b5998;
+    }
+    .filter-btn {
+
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+    }
+    .filter-btn:hover {
+      background: #8d6e63;
+    }
+	/* Search toggle animation */
+#searchBarContainer {
+  transition: all 0.4s ease;
+}
+
+#searchBarContainer input {
+  padding: 12px 18px;
+  width: 280px;
+  font-size: 1rem;
+  border: 2px solid #ffb74d;
+  border-radius: 30px;
+  outline: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  background: #fffaf3;
+  color: #6d4c41;
+  transition: all 0.3s ease;
+}
+
+#searchBarContainer input:focus {
+  border-color: #ff9800;
+  box-shadow: 0 4px 12px rgba(255,152,0,0.3);
+}
+
+/* Make the search toggle button a bit different */
+.search-toggle {
+  background: #ffb74d;
+  color: white;
+  border-radius: 25px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.search-toggle:hover {
+  background: #ffa726;
+  transform: scale(1.05);
+}
+
+  </style>
+</head>
+<body>
+
+<button class="lang-switch" onclick="toggleLang()">Deutsch</button>
+
+<header>
+  <img src="https://macis-leipzig.de/wp-content/uploads/2019/03/macis_Logo_Leipzig_Weiss-1-768x498_neu.png" alt="Macis Leipzig Logo">
+  <h1 id="title">Macis Biobäckerei in Leipzig</h1>
+  <p id="subtitle">Traditionelle Backkunst, jeden Tag frisch</p>
+  <a id="orderTop" class="order-btn" href="mailto:bestellung@baeckerei.de?subject=Neue%20Bestellung">Jetzt bestellen</a>
+</header>
+
+
+
+<!-- 🥖 Category Filters + Search Button -->
+<div style="text-align:center; margin:20px 0;">
+  <button class="filter-btn" onclick="filterProducts('all')">Alle Backwaren</button>
+  <button class="filter-btn" onclick="filterProducts('bread')">Brot</button>
+  <button class="filter-btn" onclick="filterProducts('broetchen')">Brötchen</button>
+  <button class="filter-btn" onclick="filterProducts('sweet')">Süßes</button>
+  
+  <!-- 🔍 Stylish Search Toggle -->
+  <button class="filter-btn search-toggle" onclick="toggleSearch()">🔍 Suche</button>
+</div>
+
+<!-- 🔍 Hidden Search Bar -->
+<div id="searchBarContainer" style="text-align:center; margin:15px 0; display:none;">
+  <input type="text" id="searchInput" placeholder="Gib ein, was du suchst..." onkeyup="searchProducts()" />
+</div>
+
+
+
+<section class="products" id="productGrid"></section>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <button class="close-btn" onclick="closeModal()">&times;</button>
+    <img id="modalImg" src="" style="width:100%; border-radius:10px; margin-bottom:15px;">
+    <h2 id="modalTitle"></h2>
+    <p id="modalCal"></p>
+    <p id="modalAllergen"></p>
+    <a id="orderLink" class="order-link" href="">Bestellung starten</a>
+  </div>
+</div>
+<!-- 📍 Contact & Map Section -->
+<section style="background:#fff3e0; padding:60px 20px; text-align:center;">
+  <h2 style="font-size:2rem; color:#6d4c41; margin-bottom:20px;">Kontakt & Öffnungszeiten</h2>
+  
+  <p><strong>Adresse:</strong> Musterstraße 12, 04109 Leipzig</p>
+  <p><strong>Telefon:</strong> <a href="tel:+491234567890" style="color:#6d4c41;">+49 123 4567890</a></p>
+  <p><strong>E-Mail:</strong> <a href="mailto:info@baeckerei.de" style="color:#6d4c41;">info@baeckerei.de</a></p>
+  
+  <div style="margin:30px auto; max-width:600px;">
+    <iframe 
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2464.436832305727!2d12.374732115782038!3d51.339695779611846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a6f83b0c7bc8f3%3A0x37f03790b9437f4b!2sLeipzig%20City%20Center!5e0!3m2!1sen!2sde!4v1689355851448!5m2!1sen!2sde" 
+      width="100%" height="300" style="border:0; border-radius:15px;" allowfullscreen="" loading="lazy">
+    </iframe>
+  </div>
+
+  <h3 style="margin-top:30px; font-size:1.5rem; color:#6d4c41;">Öffnungszeiten</h3>
+  <p>Montag – Freitag: 7:00 – 18:00 Uhr</p>
+  <p>Samstag: 8:00 – 14:00 Uhr</p>
+  <p>Sonntag: Geschlossen</p>
+</section>
+
+<footer>
+  <div class="social-buttons">
+    <a href="https://www.instagram.com/macis_biobaeckerei" class="social-icon instagram" target="_blank">
+      <i class="fab fa-instagram"></i>
+    </a>
+    <a href="https://www.facebook.com/macisleipzig" class="social-icon facebook" target="_blank">
+      <i class="fab fa-facebook-f"></i>
+    </a>
+  </div>
+  Demo Bäckerei Website &copy; 2025 – Mit Liebe gebacken
+</footer>
+
+<script>
+  const products = [
+    { img:'https://pure-pastry.de/wp-content/uploads/2025/01/Pure_Pastry_Freisteller_DSC07676.jpg', name_de:'Buttercroissant', name_en:'Butter Croissant', cal:280, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet' },
+    { img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3410-768x512.jpg', name_de:'Macis Kruste', name_en:'Apple Turnover', cal:310, allergen_de:'Gluten, Milch', allergen_en:'Gluten, Dairy', category:'bread' },
+    { img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3655-768x512.jpg', name_de:'Das Kernige', name_en:'Chocolate Muffin', cal:360, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'bread' },
+    { img:'https://m.media-amazon.com/images/I/61-7rqHsRqL._UF894,1000_QL80_.jpg', name_de:'RVK Brötchen', name_en:'Wholegrain Sandwich', cal:250, allergen_de:'Gluten, Sesam', allergen_en:'Gluten, Sesame', category:'broetchen' },
+    { img:'https://www.verygourmand.com/img/anblog/b/b-6273bd7170ea4-anblog_thumb.jpg', name_de:'Flan Kuchen', name_en:'Cheesecake', cal:330, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet' },
+    { img:'https://aryzta.de/fileadmin/_processed_/5/e/csm_20685_1659091420_46bca13d26.png', name_de:'Kartoffel Kruste', name_en:'Rustic Bread', cal:190, allergen_de:'Gluten', allergen_en:'Gluten', category:'bread' },
+    { img:'https://www.arctis.de/wp-content/uploads/2023/07/032-Laugenbroetchen.jpg', name_de:'Laugenbrötchen', name_en:'Pretzel', cal:220, allergen_de:'Gluten', allergen_en:'Gluten', category:'broetchen' },
+    { img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3847-768x512.jpg', name_de:'Dinkel Baguette', name_en:'Black Forest Cake', cal:420, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'bread' },
+    { img:'https://partylicious.net/wp-content/uploads/2020/04/stack-macarons-pink-white-680-2-min-500x375.jpg', name_de:'Macarons', name_en:'Macarons', cal:150, allergen_de:'Mandeln, Eier', allergen_en:'Almonds, Eggs', category:'sweet' },
+    { img:'https://zeitfuerbrot.com/img/containers/assets/sortiment/zfb_web_schnecken_zimt_02.JPG/997908a45462a7defaeae6bf7a383896.JPG', name_de:'Zimtschnecke', name_en:'Cinnamon Roll', cal:340, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet' }
+  ];
+
+  let currentLang = 'de';
+
+  function renderProducts(filter = 'all') {
+    const grid = document.getElementById('productGrid');
+    let filteredProducts = filter === 'all' ? products : products.filter(p => p.category === filter);
+
+    grid.innerHTML = filteredProducts.map((p, i) => `
+      <div class="product" onclick="openModal(${products.indexOf(p)})">
+        <img src="${p.img}" alt="${currentLang==='de'?p.name_de:p.name_en}">
+        <div class="product-info">
+          <h3>${currentLang==='de'?p.name_de:p.name_en}</h3>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function filterProducts(category) {
+    renderProducts(category);
+  }
+function searchProducts() {
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  const grid = document.getElementById('productGrid');
+
+  const filtered = products.filter(p => {
+    const name = currentLang === 'de' ? p.name_de.toLowerCase() : p.name_en.toLowerCase();
+    return name.includes(query);
+  });
+
+  grid.innerHTML = filtered.map((p, i) => `
+    <div class="product" onclick="openModal(${products.indexOf(p)})">
+      <img src="${p.img}" alt="${currentLang==='de'?p.name_de:p.name_en}">
+      <div class="product-info">
+        <h3>${currentLang==='de'?p.name_de:p.name_en}</h3>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleSearch() {
+  const bar = document.getElementById('searchBarContainer');
+  bar.style.display = (bar.style.display === 'none' || bar.style.display === '') ? 'block' : 'none';
+}
+
+  function openModal(i) {
+    const p = products[i];
+    document.getElementById('modalImg').src = p.img;
+    document.getElementById('modalTitle').textContent = currentLang==='de' ? p.name_de : p.name_en;
+    document.getElementById('modalCal').textContent = (currentLang==='de' ? 'Kalorien: ' : 'Calories: ') + p.cal + ' kcal';
+    document.getElementById('modalAllergen').textContent = (currentLang==='de' ? 'Allergene: ' : 'Allergens: ') + (currentLang==='de' ? p.allergen_de : p.allergen_en);
+    const mail = `mailto:${currentLang==='de' ? 'bestellung@baeckerei.de' : 'order@bakery.de'}?subject=${encodeURIComponent((currentLang==='de'?'Bestellung: ':'Order: ') + (currentLang==='de' ? p.name_de : p.name_en))}`;
+    document.getElementById('orderLink').href = mail;
+    document.getElementById('orderLink').textContent = currentLang==='de' ? 'Hier bestellen' : 'Order Now';
+    document.getElementById('modal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+  }
+
+  function toggleLang() {
+    currentLang = currentLang === 'de' ? 'en' : 'de';
+    document.querySelector('.lang-switch').textContent = currentLang === 'de' ? 'Deutsch' : 'English';
+    document.getElementById('title').textContent = currentLang === 'de'
+      ? 'Macis Biobäckerei in Leipzig'
+      : 'Macis Organic Bakery in Leipzig';
+    document.getElementById('subtitle').textContent = currentLang === 'de'
+      ? 'Traditionelle Backkunst, jeden Tag frisch'
+      : 'Traditional Baking, Fresh Every Day';
+    document.getElementById('orderTop').href = currentLang === 'de'
+      ? 'mailto:bestellung@baeckerei.de?subject=Neue Bestellung'
+      : 'mailto:order@bakery.de?subject=New Order';
+    document.getElementById('orderTop').textContent = currentLang === 'de'
+      ? 'Jetzt bestellen'
+      : 'Order Now';
+    renderProducts();
+  }
+
+  renderProducts();
+</script>
+
+</body>
+</html>
