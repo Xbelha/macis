@@ -248,6 +248,27 @@
   background: #ffa726;
   transform: scale(1.05);
 }
+.sticky-bar {
+  position: sticky;
+  top: 0;
+  background: #fff3e0;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  z-index: 999;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.sticky-bar button {
+  background: var(--accent-color);
+  border: none;
+  padding: 10px 15px;
+  border-radius: 20px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+}
 
   </style>
 </head>
@@ -287,10 +308,11 @@
 <div class="modal" id="modal">
   <div class="modal-content">
     <button class="close-btn" onclick="closeModal()">&times;</button>
-    <img id="modalImg" src="" style="width:100%; border-radius:10px; margin-bottom:15px;">
+    <img id="modalImg" loading="lazy" src="" style="width:100%; border-radius:10px; margin-bottom:15px;">
     <h2 id="modalTitle"></h2>
     <p id="modalCal"></p>
     <p id="modalAllergen"></p>
+	<p id="modalPrice"></p>
     <a id="orderLink" class="order-link" href="">Bestellung starten</a>
   </div>
 </div>
@@ -328,16 +350,16 @@
 
 <script>
   const products = [
-    { img:'https://pure-pastry.de/wp-content/uploads/2025/01/Pure_Pastry_Freisteller_DSC07676.jpg', name_de:'Buttercroissant', name_en:'Butter Croissant', cal:280, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet' },
-    { img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3410-768x512.jpg', name_de:'Macis Kruste', name_en:'Macis Kruste', cal:310, allergen_de:'Gluten, Milch', allergen_en:'Gluten, Dairy', category:'bread' },
-    { img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3655-768x512.jpg', name_de:'Das Kernige', name_en:'Chocolate Muffin', cal:360, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'bread' },
-    { img:'https://m.media-amazon.com/images/I/61-7rqHsRqL._UF894,1000_QL80_.jpg', name_de:'RVK Brötchen', name_en:'RVK Brötchen', cal:250, allergen_de:'Gluten, Sesam', allergen_en:'Gluten, Sesame', category:'broetchen' },
-    { img:'https://www.verygourmand.com/img/anblog/b/b-6273bd7170ea4-anblog_thumb.jpg', name_de:'Flan Kuchen', name_en:'Cheesecake', cal:330, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet' },
-    { img:'https://aryzta.de/fileadmin/_processed_/5/e/csm_20685_1659091420_46bca13d26.png', name_de:'Kartoffel Kruste', name_en:'Rustic Bread', cal:190, allergen_de:'Gluten', allergen_en:'Gluten', category:'bread' },
-    { img:'https://www.arctis.de/wp-content/uploads/2023/07/032-Laugenbroetchen.jpg', name_de:'Laugenbrötchen', name_en:'Pretzel', cal:220, allergen_de:'Gluten', allergen_en:'Gluten', category:'broetchen' },
-    { img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3847-768x512.jpg', name_de:'Dinkel Baguette', name_en:'Spelt Baguette', cal:420, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'bread' },
-    { img:'https://partylicious.net/wp-content/uploads/2020/04/stack-macarons-pink-white-680-2-min-500x375.jpg', name_de:'Macarons', name_en:'Macarons', cal:150, allergen_de:'Mandeln, Eier', allergen_en:'Almonds, Eggs', category:'sweet' },
-    { img:'https://zeitfuerbrot.com/img/containers/assets/sortiment/zfb_web_schnecken_zimt_02.JPG/997908a45462a7defaeae6bf7a383896.JPG', name_de:'Zimtschnecke', name_en:'Cinnamon Roll', cal:340, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet' }
+    { img:'https://pure-pastry.de/wp-content/uploads/2025/01/Pure_Pastry_Freisteller_DSC07676.jpg', name_de:'Buttercroissant', name_en:'Butter Croissant', cal:280, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: '2.50€' },
+    { img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3410-768x512.jpg', name_de:'Macis Kruste', name_en:'Macis Kruste', cal:310, allergen_de:'Gluten, Milch', allergen_en:'Gluten, Dairy', category:'bread', price: '2.50€' },
+    { img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3655-768x512.jpg', name_de:'Das Kernige', name_en:'Das Kernige', cal:360, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'bread', price: '2.50€' },
+    { img:'https://m.media-amazon.com/images/I/61-7rqHsRqL._UF894,1000_QL80_.jpg', name_de:'RVK Brötchen', name_en:'RVK Brötchen', cal:250, allergen_de:'Gluten, Sesam', allergen_en:'Gluten, Sesame', category:'broetchen', price: '2.50€' },
+    { img:'https://www.verygourmand.com/img/anblog/b/b-6273bd7170ea4-anblog_thumb.jpg', name_de:'Flan Kuchen', name_en:'Cheesecake', cal:330, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: '2.50€' },
+    { img:'https://aryzta.de/fileadmin/_processed_/5/e/csm_20685_1659091420_46bca13d26.png', name_de:'Kartoffel Kruste', name_en:'Rustic Bread', cal:190, allergen_de:'Gluten', allergen_en:'Gluten', category:'bread', price: '2.50€' },
+    { img:'https://www.arctis.de/wp-content/uploads/2023/07/032-Laugenbroetchen.jpg', name_de:'Laugenbrötchen', name_en:'Pretzel', cal:220, allergen_de:'Gluten', allergen_en:'Gluten', category:'broetchen', price: '2.50€' },
+    { img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3847-768x512.jpg', name_de:'Dinkel Baguette', name_en:'Spelt Baguette', cal:420, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'bread', price: '2.50€', isNew: true },
+    { img:'https://partylicious.net/wp-content/uploads/2020/04/stack-macarons-pink-white-680-2-min-500x375.jpg', name_de:'Macarons', name_en:'Macarons', cal:150, allergen_de:'Mandeln, Eier', allergen_en:'Almonds, Eggs', category:'sweet', price: '2.50€' },
+    { img:'https://zeitfuerbrot.com/img/containers/assets/sortiment/zfb_web_schnecken_zimt_02.JPG/997908a45462a7defaeae6bf7a383896.JPG', name_de:'Zimtschnecke', name_en:'Cinnamon Roll', cal:340, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: '2.50€' }
   ];
 
   let currentLang = 'de';
@@ -347,10 +369,12 @@
     let filteredProducts = filter === 'all' ? products : products.filter(p => p.category === filter);
 
     grid.innerHTML = filteredProducts.map((p, i) => `
-      <div class="product" onclick="openModal(${products.indexOf(p)})">
-        <img src="${p.img}" alt="${currentLang==='de'?p.name_de:p.name_en}">
+<div class="product" onclick="openModal(...)" style="position: relative;">
+  ${p.isNew ? `<div style="position:absolute;top:10px;left:10px;background:#ff5722;color:white;padding:4px 10px;border-radius:5px;font-size:0.8rem;">${currentLang==='de' ? 'Neu' : 'New'}</div>` : ''}
+<img loading="lazy" src="${p.img}" alt="${currentLang==='de'?p.name_de:p.name_en}">
         <div class="product-info">
           <h3>${currentLang==='de'?p.name_de:p.name_en}</h3>
+		  <p>${p.price}</p>
         </div>
       </div>
     `).join('');
@@ -389,6 +413,8 @@ function toggleSearch() {
     document.getElementById('modalTitle').textContent = currentLang==='de' ? p.name_de : p.name_en;
     document.getElementById('modalCal').textContent = (currentLang==='de' ? 'Kalorien: ' : 'Calories: ') + p.cal + ' kcal';
     document.getElementById('modalAllergen').textContent = (currentLang==='de' ? 'Allergene: ' : 'Allergens: ') + (currentLang==='de' ? p.allergen_de : p.allergen_en);
+	document.getElementById('modalPrice').textContent = 
+  (currentLang==='de' ? 'Preis: ' : 'Price: ') + p.price;
     const mail = `mailto:${currentLang==='de' ? 'bestellung@baeckerei.de' : 'order@bakery.de'}?subject=${encodeURIComponent((currentLang==='de'?'Bestellung: ':'Order: ') + (currentLang==='de' ? p.name_de : p.name_en))}`;
     document.getElementById('orderLink').href = mail;
     document.getElementById('orderLink').textContent = currentLang==='de' ? 'Hier bestellen' : 'Order Now';
