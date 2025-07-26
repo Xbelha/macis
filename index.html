@@ -1079,10 +1079,8 @@ function submitOrder(event) {
 
     // Prepare email body with order summary
     const summary = cart.map(item => {
-        return `${item.quantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en} (${(item.quantity * item.product.price).toFixed(2)} €)`;
-    }).join('\n');
+return `${item.quantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en}`;    }).join('\n');
 
-    const total = cart.reduce((sum, item) => sum + item.quantity * item.product.price, 0).toFixed(2);
 
     const emailBody = `
 ${translations[currentLang].newOrderEmailBodyTitle}
@@ -1093,7 +1091,6 @@ ${translations[currentLang].pickupDateLabel} ${pickupDate}
 ${translations[currentLang].pickupTimeLabel} ${pickupTime}
 ${translations[currentLang].productsEmailBody}
 ${summary}
-${translations[currentLang].totalText} ${total} €
 ${translations[currentLang].messageEmailBody} ${message ? message : translations[currentLang].notProvided}
     `.trim();
 
