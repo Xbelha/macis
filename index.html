@@ -29,7 +29,7 @@
 
         /* Header Styling */
         header {
-            background: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1600&q=80') center/cover;
+            background: url('https://macis-leipzig.de/wp-content/uploads/2019/03/Macis-Ba%CC%88ckerei.jpg') center/cover;
             color: white;
             text-align: center;
             padding: 120px 20px 60px;
@@ -314,7 +314,7 @@
         #orderForm input[type="email"],
         #orderForm input[type="tel"],
         #orderForm input[type="date"],
-        #orderForm input[type="time"],
+        #orderForm select, /* Added select for pickupTime */
         #orderForm textarea {
             width: 100%;
             padding: 12px;
@@ -325,6 +325,13 @@
             margin-bottom: 15px;
             background: #fffaf3;
             color: #4e342e;
+            -webkit-appearance: none; /* Remove default arrow on select for better styling consistency */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234e342e%22%20d%3D%22M287%2C197.398L146.2%2C56.602L5.4%2C197.398L0%2C192L146.2%2C45.398L292.4%2C192L287%2C197.398z%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow for select */
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 12px auto;
         }
         /* Textarea specific styling */
         #orderForm textarea {
@@ -546,7 +553,7 @@
             .modal-add-to-cart button {
                 width: 100%;
             }
-            #orderForm input, #orderForm textarea, #orderForm button {
+            #orderForm input, #orderForm textarea, #orderForm button, #orderForm select {
                 font-size: 0.95rem;
                 padding: 10px;
             }
@@ -589,7 +596,8 @@
             .product-price {
                 font-size: 1.1rem;
             }
-        </style>
+        }
+    </style>
 </head>
 <body>
 
@@ -627,7 +635,7 @@
     <div class="modal" id="modal">
     <div class="modal-content card-style">
       <button class="close-btn" onclick="closeModal()">×</button>
-      <img id="modalImg" src="" alt="" style="width:100%; border-radius:10px; max-height:250px; object-fit:cover; margin-bottom:20px;">
+      <img id="modalImg" src="" alt="" loading="lazy">
       <h3 id="modalTitle"></h3>
       <p id="modalCal"></p>
       <p id="modalAllergen"></p>
@@ -644,23 +652,23 @@
       <button class="close-btn" onclick="closeOrderForm()">×</button>
       <h2 data-lang-key="orderTitle">Bestellung</h2>
       <form id="orderForm" onsubmit="submitOrder(event)">
-        <label for="nameInput" style="display: none;"></label>
+        <label for="nameInput" class="sr-only" data-lang-key="yourName"></label>
         <input type="text" id="nameInput" name="name" data-lang-placeholder="yourName" required>
 
-        <label for="phoneInput" style="display: none;"></label>
+        <label for="phoneInput" class="sr-only" data-lang-key="phoneNumber"></label>
         <input type="tel" id="phoneInput" name="phone" data-lang-placeholder="phoneNumber" required>
 
-        <label for="emailInput" style="display: none;"></label>
+        <label for="emailInput" class="sr-only" data-lang-key="emailOptional"></label>
         <input type="email" id="emailInput" name="email" data-lang-placeholder="emailOptional">
 
         <label for="pickupDate" data-lang-key="pickupDateLabel">Abholdatum:</label>
-        <input type="date" id="pickupDate" name="pickupDate" required>
+        <input type="date" id="pickupDate" name="pickupDate" required onchange="populatePickupHours()">
 
         <label for="pickupTime" data-lang-key="pickupTimeLabel">Abholzeit:</label>
-        <input type="time" id="pickupTime" name="pickupTime" required>
+        <select id="pickupTime" name="pickupTime" required></select>
 
         <div id="cartItemsContainer">
-            <h3 data-lang-key="yourCart" style="margin-top:0;">Dein Warenkorb</h3>
+            <h3 data-lang-key="yourCart">Dein Warenkorb</h3>
           <div id="selectedProductsList"></div>
         </div>
 
@@ -682,7 +690,7 @@
     </iframe>
     </div>
     <h3 data-lang-key="openingHoursTitle">Öffnungszeiten</h3>
-    <p data-lang-key="openingHoursWeekday">Montag – Samstag: 7:00 – 20:00 Uhr</p>
+    <p data-lang-key="openingHoursWeekday">Montag – Samstag: 7:00 – 19:00 Uhr</p>
     <p data-lang-key="openingHoursSunday">Sonntag: 8:00 – 12:00 Uhr</p>
   </section>
 </main>
@@ -720,6 +728,9 @@ const selectedProductsList = document.getElementById('selectedProductsList');
 const orderForm = document.getElementById('orderForm');
 const cartCountSpan = document.getElementById('cartCount');
 const modalProductQuantityInput = document.getElementById('modalProductQuantity');
+const pickupDateInput = document.getElementById('pickupDate');
+const pickupTimeSelect = document.getElementById('pickupTime');
+
 
 // Object containing translations for different languages
 const translations = {
@@ -740,7 +751,7 @@ const translations = {
   	phoneLabel: 'Telefon:',
   	emailLabel: 'E-Mail:',
   	openingHoursTitle: 'Öffnungszeiten',
-  	openingHoursWeekday: 'Montag – Samstag: 7:00 – 20:00 Uhr',
+  	openingHoursWeekday: 'Montag – Samstag: 7:00 – 19:00 Uhr',
   	openingHoursSunday: 'Sonntag: 8:00 – 12:00 Uhr',
   	selectProductQuantityAlert: 'Bitte gib eine gültige Menge ein.',
   	noProductsAddedAlert: 'Dein Warenkorb ist leer.',
@@ -755,8 +766,8 @@ const translations = {
   	productsEmailBody: 'Produkte:',
   	messageEmailBody: 'Nachricht:',
     pickupDateLabel: 'Abholdatum:',
-    pickupTimeLabel: 'Abholzeit:',
-    pickupTimeInvalid: 'Bitte wähle eine Abholzeit innerhalb der Öffnungszeiten (Mo-Sa: 7-20 Uhr, So: 8-12 Uhr).',
+    pickupTimeLabel: 'Abholzeit (Uhr):',
+    pickupTimeInvalid: 'Bitte wähle eine Abholzeit innerhalb der Öffnungszeiten (Mo-Sa: 7-19 Uhr, So: 8-12 Uhr).',
     pickupTimePast: 'Die gewählte Abholzeit liegt in der Vergangenheit.',
     pickupDateInvalid: 'Bitte wähle ein gültiges Abholdatum in der Zukunft.',
     addToCartBtn: 'Zum Warenkorb',
@@ -786,7 +797,7 @@ const translations = {
   	phoneLabel: 'Phone:',
   	emailLabel: 'Email:',
   	openingHoursTitle: 'Opening Hours',
-  	openingHoursWeekday: 'Monday – Saturday: 7:00 AM – 8:00 PM',
+  	openingHoursWeekday: 'Monday – Saturday: 7:00 AM – 7:00 PM',
   	openingHoursSunday: 'Sunday: 8:00 AM – 12:00 PM',
   	selectProductQuantityAlert: 'Please enter a valid quantity.',
   	noProductsAddedAlert: 'Your cart is empty.',
@@ -801,8 +812,8 @@ const translations = {
   	productsEmailBody: 'Products:',
   	messageEmailBody: 'Message:',
     pickupDateLabel: 'Pickup Date:',
-    pickupTimeLabel: 'Pickup Time:',
-    pickupTimeInvalid: 'Please select a pickup time within opening hours (Mon-Sat: 7 AM - 8 PM, Sun: 8 AM - 12 PM).',
+    pickupTimeLabel: 'Pickup Time (Hour):',
+    pickupTimeInvalid: 'Please select a pickup time within opening hours (Mon-Sat: 7 AM - 7 PM, Sun: 8 AM - 12 PM).',
     pickupTimePast: 'The selected pickup time is in the past.',
     pickupDateInvalid: 'Please select a valid pickup date in the future.',
     addToCartBtn: 'Add to Cart',
@@ -834,60 +845,60 @@ function renderProducts(itemsToRender) {
 // Opens the product detail modal
 function openModal(productId) {
   const p = products.find(prod => prod.id === productId);
-  if (!p) return; // Exit if product not found
+  if (!p) return;
 
-  currentProductInModal = p; // Set the current product
-  modalProductQuantityInput.value = 1; // Reset quantity to 1
+  currentProductInModal = p;
+  modalProductQuantityInput.value = 1;
 
-  // Populate modal with product details
   document.getElementById('modalImg').src = p.img;
   document.getElementById('modalTitle').textContent = currentLang === 'de' ? p.name_de : p.name_en;
   document.getElementById('modalCal').textContent = (currentLang === 'de' ? 'Kalorien: ' : 'Calories: ') + p.cal + ' kcal';
   document.getElementById('modalAllergen').textContent = (currentLang === 'de' ? 'Allergene: ' : 'Allergens: ') + (currentLang === 'de' ? p.allergen_de : p.allergen_en);
   document.getElementById('modalPrice').textContent = `${p.price.toFixed(2)} €`;
-  modal.style.display = 'flex'; // Show the modal
+  modal.style.display = 'flex';
 }
 
 // Closes the product detail modal
 function closeModal() {
-  modal.style.display = 'none'; // Hide the modal
-  currentProductInModal = null; // Clear the current product
+  modal.style.display = 'none';
+  currentProductInModal = null;
 }
 
 // Opens the order form modal and renders cart items
 function openOrderForm() {
-  orderModal.style.display = 'flex'; // Show the order modal
-  renderCartItems(); // Update cart display
-  setMinimumDateTime(); // Set minimum date and time for pickup
+  orderModal.style.display = 'flex';
+  renderCartItems();
+  setMinimumDateTime();
+  populatePickupHours();
 }
 
 // Closes the order form modal
 function closeOrderForm() {
-  orderModal.style.display = 'none'; // Hide the order modal
+  orderModal.style.display = 'none';
 }
 
 // Filters products based on category
 function filterProducts(cat) {
   const filtered = cat === 'all' ? products : products.filter(p => p.category === cat);
-  renderProducts(filtered); // Render filtered products
+  renderProducts(filtered);
 }
 
 // Toggles the visibility of the search bar
 function toggleSearch() {
   searchBarContainer.style.display = searchBarContainer.style.display === 'none' || searchBarContainer.style.display === '' ? 'block' : 'none';
   if (searchBarContainer.style.display === 'block') {
-    document.getElementById('searchInput').focus(); // Focus search input if visible
+    document.getElementById('searchInput').focus();
   }
 }
 
 // Searches products based on input value
 function searchProducts() {
-  const q = document.getElementById('searchInput').value.toLowerCase(); // Get search query
+  const q = document.getElementById('searchInput').value.toLowerCase();
   const filtered = products.filter(p => {
     const name = currentLang === 'de' ? p.name_de.toLowerCase() : p.name_en.toLowerCase();
-    return name.includes(q); // Check if product name includes query
+    return name.includes(q);
   });
-  renderProducts(filtered); // Render search results
+  renderProducts(filtered);
 }
 
 
@@ -896,152 +907,203 @@ function applyLanguage() {
   document.querySelectorAll('[data-lang-key]').forEach(el => {
     const key = el.dataset.langKey;
     if (translations[currentLang][key]) {
-      el.textContent = translations[currentLang][key]; // Update text content
+      el.textContent = translations[currentLang][key];
     }
   });
 
   document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
     const key = el.dataset.langPlaceholder;
     if (translations[currentLang][key]) {
-        el.placeholder = translations[currentLang][key]; // Update placeholder text
+        el.placeholder = translations[currentLang][key];
     }
   });
 
-  renderProducts(products); // Re-render products for language update
-  renderCartItems(); // Re-render cart items for language update
+  // For accessibility, update the `aria-label` or `title` for screen readers if applicable.
+  // Not strictly needed here as placeholders serve this for inputs.
+  // For the 'sr-only' labels:
+  document.querySelectorAll('.sr-only').forEach(el => {
+    const key = el.dataset.langKey;
+    if (translations[currentLang][key]) {
+        el.textContent = translations[currentLang][key]; // Update the hidden text for screen readers
+    }
+  });
+
+
+  renderProducts(products);
+  renderCartItems();
 }
 
 // Toggles the current language between German and English
 function toggleLang() {
-  currentLang = currentLang === 'de' ? 'en' : 'de'; // Switch language
-  applyLanguage(); // Apply new language
-  document.documentElement.lang = currentLang; // Update HTML lang attribute
+  currentLang = currentLang === 'de' ? 'en' : 'de';
+  applyLanguage();
+  document.documentElement.lang = currentLang;
 }
 
 // Updates the shopping cart item count display
 function updateCartCount() {
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0); // Calculate total items
-  cartCountSpan.textContent = totalItems; // Update text
-  cartCountSpan.style.display = totalItems > 0 ? 'flex' : 'none'; // Show/hide based on count
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  cartCountSpan.textContent = totalItems;
+  cartCountSpan.style.display = totalItems > 0 ? 'flex' : 'none';
 }
 
 // Adds the current product in the modal to the cart
 function addToCartFromModal() {
-  if (!currentProductInModal) return; // Exit if no product selected
+  if (!currentProductInModal) return;
 
   const quantity = parseInt(modalProductQuantityInput.value);
   if (isNaN(quantity) || quantity <= 0) {
-    alert(translations[currentLang].selectProductQuantityAlert); // Alert for invalid quantity
+    alert(translations[currentLang].selectProductQuantityAlert);
     return;
   }
 
   const existingItemIndex = cart.findIndex(item => item.product.id === currentProductInModal.id);
 
   if (existingItemIndex > -1) {
-    cart[existingItemIndex].quantity += quantity; // Increase quantity if item exists
+    cart[existingItemIndex].quantity += quantity;
   } else {
-    cart.push({ product: currentProductInModal, quantity: quantity }); // Add new item to cart
+    cart.push({ product: currentProductInModal, quantity: quantity });
   }
 
-  closeModal(); // Close product modal
-  updateCartCount(); // Update cart count display
+  closeModal();
+  updateCartCount();
 }
 
 // Renders the items currently in the shopping cart
 function renderCartItems() {
-  selectedProductsList.innerHTML = ''; // Clear current cart display
+  selectedProductsList.innerHTML = '';
   let totalPrice = 0;
 
   if (cart.length === 0) {
     selectedProductsList.innerHTML = `<p style="color:#888; text-align:center;">
       ${translations[currentLang].noProductsAddedAlert}
-    </p>`; // Display empty cart message
+    </p>`;
     return;
   }
 
   cart.forEach((item, index) => {
-    const itemDiv = document.createElement('div');
-    itemDiv.classList.add('cart-item-row');
     const itemPrice = (item.product.price * item.quantity).toFixed(2);
-    itemDiv.innerHTML = `
-      <span>${currentLang === 'de' ? item.product.name_de : item.product.name_en} × ${item.quantity} (${itemPrice} €)</span>
-      <button type="button" onclick="removeFromCart(${index})">✖</button>
+    selectedProductsList.innerHTML += `
+      <div class="cart-item-row">
+        <span>${currentLang === 'de' ? item.product.name_de : item.product.name_en} × ${item.quantity} (${itemPrice} €)</span>
+        <button type="button" onclick="removeFromCart(${index})">✖</button>
+      </div>
     `;
-    selectedProductsList.appendChild(itemDiv);
-    totalPrice += item.product.price * item.quantity; // Calculate total price
+    totalPrice += item.product.price * item.quantity;
   });
 
-  const totalDiv = document.createElement('div');
-  totalDiv.classList.add('cart-total');
-  totalDiv.innerHTML = `
-    <span>${translations[currentLang].totalText}</span>
-    <span>${totalPrice.toFixed(2)} €</span>
+  selectedProductsList.innerHTML += `
+    <div class="cart-total">
+      <span>${translations[currentLang].totalText}</span>
+      <span>${totalPrice.toFixed(2)} €</span>
+    </div>
   `;
-  selectedProductsList.appendChild(totalDiv); // Append total price
 }
 
 // Removes an item from the cart by its index
 function removeFromCart(index) {
-  cart.splice(index, 1); // Remove item from array
-  renderCartItems(); // Re-render cart display
-  updateCartCount(); // Update cart count
+  cart.splice(index, 1);
+  renderCartItems();
+  updateCartCount();
 }
 
-// Sets the minimum date and time for the pickup date/time inputs
+// Sets the minimum date for the pickup date input and populates hours
 function setMinimumDateTime() {
     const now = new Date();
     const year = now.getFullYear();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const day = now.getDate().toString().padStart(2, '0');
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
 
     const minDate = `${year}-${month}-${day}`;
-    document.getElementById('pickupDate').min = minDate; // Set min date
-    document.getElementById('pickupDate').value = minDate; // Set current date as default
-
-    document.getElementById('pickupTime').min = `${hours}:${minutes}`; // Set min time
-    document.getElementById('pickupTime').value = `${hours}:${minutes}`; // Set current time as default
+    pickupDateInput.min = minDate;
+    pickupDateInput.value = minDate;
 }
 
-// Validates the selected pickup time against opening hours and current time
-function validatePickupTime(date, time) {
-    const selectedDateTime = new Date(`${date}T${time}`);
+// Populates the pickupTime select element with valid hours
+function populatePickupHours() {
+    pickupTimeSelect.innerHTML = '';
+
+    const selectedDateStr = pickupDateInput.value;
+    if (!selectedDateStr) return;
+
+    const selectedDate = new Date(selectedDateStr + 'T00:00:00');
     const now = new Date();
+    const currentHour = now.getHours();
 
+    const isToday = selectedDate.toDateString() === now.toDateString();
+    const dayOfWeek = selectedDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+
+    let startHour, endHour;
+
+    if (dayOfWeek >= 1 && dayOfWeek <= 6) { // Monday to Saturday
+        startHour = 7;
+        endHour = 19;
+    } else if (dayOfWeek === 0) { // Sunday
+        startHour = 8;
+        endHour = 12;
+    } else {
+        return;
+    }
+
+    let firstAvailableHourSet = false;
+
+    for (let hour = startHour; hour <= endHour; hour++) {
+        const option = document.createElement('option');
+        option.value = hour.toString().padStart(2, '0');
+        option.textContent = `${hour}:00 Uhr`;
+
+        if (isToday && hour < currentHour) {
+            option.disabled = true;
+        }
+
+        pickupTimeSelect.appendChild(option);
+
+        if (!firstAvailableHourSet && !option.disabled) {
+            option.selected = true;
+            firstAvailableHourSet = true;
+        }
+    }
+}
+
+// Validates the selected pickup time (hour only) against opening hours and current time
+function validatePickupTime(date, hour) {
+    const selectedHour = parseInt(hour, 10);
+    const now = new Date();
+    const currentHour = now.getHours();
+
+    const selectedDate = new Date(date);
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const selectedDateOnly = new Date(selectedDateTime.getFullYear(), selectedDateTime.getMonth(), selectedDateTime.getDate());
 
+    const selectedDateOnly = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
     if (selectedDateOnly < today) {
-        alert(translations[currentLang].pickupDateInvalid); // Alert if date is in the past
+        alert(translations[currentLang].pickupDateInvalid);
         return false;
     }
 
     if (selectedDateOnly.toDateString() === today.toDateString()) {
-        if (selectedDateTime < now) {
-            alert(translations[currentLang].pickupTimePast); // Alert if time is in the past for today
+        if (selectedHour < currentHour) {
+            alert(translations[currentLang].pickupTimePast);
             return false;
         }
     }
 
-    const dayOfWeek = selectedDateTime.getDay();
-    const selectedHour = selectedDateTime.getHours();
+    const dayOfWeek = selectedDate.getDay();
 
     let isValid = false;
 
     if (dayOfWeek >= 1 && dayOfWeek <= 6) { // Monday to Saturday
-        if (selectedHour >= 7 && selectedHour < 20) { // 7 AM to 8 PM
+        if (selectedHour >= 7 && selectedHour <= 19) {
             isValid = true;
         }
     }
     else if (dayOfWeek === 0) { // Sunday
-        if (selectedHour >= 8 && selectedHour < 12) { // 8 AM to 12 PM
+        if (selectedHour >= 8 && selectedHour <= 12) {
             isValid = true;
         }
     }
 
     if (!isValid) {
-        alert(translations[currentLang].pickupTimeInvalid); // Alert if outside opening hours
+        alert(translations[currentLang].pickupTimeInvalid);
         return false;
     }
     return true;
@@ -1049,12 +1111,12 @@ function validatePickupTime(date, time) {
 
 // Handles the submission of the order form
 function submitOrder(event) {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault();
 
-    const formData = new FormData(orderForm); // Get form data
+    const formData = new FormData(orderForm);
 
     if (cart.length === 0) {
-        alert(translations[currentLang].addAtLeastOneProductAlert); // Alert if cart is empty
+        alert(translations[currentLang].addAtLeastOneProductAlert);
         return;
     }
 
@@ -1062,27 +1124,25 @@ function submitOrder(event) {
     let email = formData.get('email');
     let phone = formData.get('phone');
     let pickupDate = formData.get('pickupDate');
-    let pickupTime = formData.get('pickupTime');
+    let pickupHour = formData.get('pickupTime');
+
     let message = formData.get('message');
 
     if (!phone) {
-      alert(translations[currentLang].providePhoneNumberAlert); // Alert if phone number is missing
+      alert(translations[currentLang].providePhoneNumberAlert);
       return;
     }
 
-    if (!pickupDate || !pickupTime) {
-        alert(translations[currentLang].pickupDateInvalid); // Alert if pickup date/time is missing
+    if (!pickupDate || !pickupHour) {
+        alert(translations[currentLang].pickupDateInvalid);
         return;
     }
 
-    if (!validatePickupTime(pickupDate, pickupTime)) {
-        return; // Stop submission if time validation fails
+    if (!validatePickupTime(pickupDate, pickupHour)) {
+        return;
     }
 
-    // Prepare email body with order summary
-    const summary = cart.map(item => {
-return `${item.quantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en}`;    }).join('\n');
-
+    const summary = cart.map(item => `${item.quantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en}`).join('\n');
 
     const emailBody = `
 ${translations[currentLang].newOrderEmailBodyTitle}
@@ -1090,22 +1150,19 @@ ${translations[currentLang].nameEmailBody} ${name}
 ${translations[currentLang].emailEmailBody} ${email ? email : translations[currentLang].notProvided}
 ${translations[currentLang].phoneEmailBody} ${phone}
 ${translations[currentLang].pickupDateLabel} ${pickupDate}
-${translations[currentLang].pickupTimeLabel} ${pickupTime}
+${translations[currentLang].pickupTimeLabel} ${pickupHour}:00 Uhr
 ${translations[currentLang].productsEmailBody}
 ${summary}
 ${translations[currentLang].messageEmailBody} ${message ? message : translations[currentLang].notProvided}
     `.trim();
 
-    // Set recipient email
     const recipientEmail = 'order@yourbakery.com'; // IMPORTANT: Change to your actual bakery email
 
-    // Create mailto link and open it
     const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(translations[currentLang].newOrderEmailSubject)}&body=${encodeURIComponent(emailBody)}`;
     window.location.href = mailtoLink;
 
-    alert(translations[currentLang].orderSuccessAlert); // Alert user of successful order
+    alert(translations[currentLang].orderSuccessAlert);
 
-    // Clear cart and reset form after triggering mailto
     cart = [];
     updateCartCount();
     closeOrderForm();
@@ -1114,8 +1171,11 @@ ${translations[currentLang].messageEmailBody} ${message ? message : translations
 
 // Initial setup when the script loads
 document.addEventListener('DOMContentLoaded', () => {
-    applyLanguage(); // Apply initial language
-    updateCartCount(); // Update initial cart count
+    applyLanguage();
+    updateCartCount();
+    // Removed explicit calls to setMinimumDateTime and populatePickupHours here,
+    // as they are handled when openOrderForm is called (e.g., when the user clicks the cart icon).
+    // This reduces redundant calls on page load.
 });
 </script>
 </body>
