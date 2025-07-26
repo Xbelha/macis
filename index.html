@@ -570,10 +570,10 @@
                 padding: 80px 10px 40px;
             }
             header h1 {
-                font-size: 2.2rem;
+                 font-size: 1.8rem;
             }
             header p {
-                font-size: 1rem;
+                font-size: 0.9rem;
             }
             .cart-icon-container {
                 right: 15px;
@@ -619,6 +619,7 @@
 
 <main>
   <div style="text-align:center; margin:20px 0;">
+  
     <button class="filter-btn" onclick="filterProducts('all')" data-lang-key="allBakedGoods">Alle Backwaren</button>
     <button class="filter-btn" onclick="filterProducts('bread')" data-lang-key="bread">Brot</button>
     <button class="filter-btn" onclick="filterProducts('broetchen')" data-lang-key="rolls">Brötchen</button>
@@ -716,7 +717,7 @@ const products = [
 ];
 
 let currentLang = 'de'; // Default language set to German
-let cart = []; // Array to store items in the shopping cart
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let currentProductInModal = null; // Stores the product currently displayed in the detail modal
 
 // Get references to DOM elements
@@ -945,6 +946,8 @@ function updateCartCount() {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   cartCountSpan.textContent = totalItems;
   cartCountSpan.style.display = totalItems > 0 ? 'flex' : 'none';
+  localStorage.setItem('cart', JSON.stringify(cart));
+
 }
 
 // Adds the current product in the modal to the cart
@@ -1005,6 +1008,8 @@ function removeFromCart(index) {
   cart.splice(index, 1);
   renderCartItems();
   updateCartCount();
+  localStorage.setItem('cart', JSON.stringify(cart));
+
 }
 
 // Sets the minimum date for the pickup date input and populates hours
@@ -1177,6 +1182,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // as they are handled when openOrderForm is called (e.g., when the user clicks the cart icon).
     // This reduces redundant calls on page load.
 });
+
 </script>
 </body>
 </html>
