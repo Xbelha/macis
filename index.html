@@ -631,7 +631,7 @@
     <p><strong data-lang-key="emailLabel">E-Mail:</strong> <a href="mailto:info@baeckerei.de" style="color:#6d4c41;">info@baeckerei.de</a></p>
     <div style="margin:30px auto; max-width:600px;">
       <iframe
-      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2495.2755235882894!2d12.373970276945532!3d51.3392762283731!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a65f9bfb607063%3A0xa63a7587f0b5c165!2sMarkgrafenstra%C3%9Fe%2010%2C%2004109%20Leipzig!5e0!3m2!1sde!2sde!4v1717367200000!5m2!1sde!2sde"
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2500.563065460592!2d12.373059415701726!3d51.34148427961841!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a652a26c4f4a3f%3A0x6a2b8e3e4a9e1e2!2sLeipzig!5e0!3m2!1sen!2sde!4v1678886400000!5m2!1sen!2sde"
       width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
     </iframe>
     </div>
@@ -772,9 +772,6 @@ const translations = {
   }
 };
 
-
-// --- Product Rendering and Modals ---
-// RENDER PRODUCTS: Now takes an array of items to render
 function renderProducts(itemsToRender) {
   productGrid.innerHTML = itemsToRender.map(p => `
     <div class="product card-style" onclick="openModal(${p.id})">
@@ -787,7 +784,6 @@ function renderProducts(itemsToRender) {
   `).join('');
 }
 
-// OPEN MODAL: Now finds product by ID
 function openModal(productId) {
   const p = products.find(prod => prod.id === productId);
   if (!p) return;
@@ -808,7 +804,6 @@ function closeModal() {
   currentProductInModal = null;
 }
 
-// OPEN ORDER FORM: Now a cart view
 function openOrderForm() {
   orderModal.style.display = 'flex';
   renderCartItems();
@@ -819,7 +814,6 @@ function closeOrderForm() {
   orderModal.style.display = 'none';
 }
 
-// --- Product Filtering and Search ---
 function filterProducts(cat) {
   const filtered = cat === 'all' ? products : products.filter(p => p.category === cat);
   renderProducts(filtered);
@@ -842,7 +836,7 @@ function searchProducts() {
 }
 
 
-// --- Language Toggle Logic ---
+
 function applyLanguage() {
   document.querySelectorAll('[data-lang-key]').forEach(el => {
     const key = el.dataset.langKey;
@@ -868,7 +862,6 @@ function toggleLang() {
   document.documentElement.lang = currentLang;
 }
 
-// --- Cart/Order Form Logic ---
 function updateCartCount() {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   cartCountSpan.textContent = totalItems;
@@ -974,12 +967,12 @@ function validatePickupTime(date, time) {
 
     let isValid = false;
 
-    if (dayOfWeek >= 1 && dayOfWeek <= 6) { // Monday to Saturday
+    if (dayOfWeek >= 1 && dayOfWeek <= 6) { 
         if (selectedHour >= 7 && selectedHour < 20) {
             isValid = true;
         }
     }
-    else if (dayOfWeek === 0) { // Sunday
+    else if (dayOfWeek === 0) { 
         if (selectedHour >= 8 && selectedHour < 12) {
             isValid = true;
         }
@@ -1016,37 +1009,40 @@ function submitOrder(event) {
     }
 
     if (!pickupDate || !pickupTime) {
-        alert(translations[currentLang].pickupDateInvalid);
+        alert(translations[currentLang].pickupDateInvalid); 
         return;
     }
 
     if (!validatePickupTime(pickupDate, pickupTime)) {
-        return;
+        return; 
     }
+    const summary = cart.map(item => {
+        return `${item.quantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en} (${(item.quantity * item.product.price).toFixed(2)} €)`;
+    }).join('\n'); 
+    const total = cart.reduce((sum, item) => sum + item.quantity * item.product.price, 0).toFixed(2);
+    const emailBody = `
+${translations[currentLang].newOrderEmailBodyTitle}
+${translations[currentLang].nameEmailBody} ${name}
+${translations[currentLang].emailEmailBody} ${email ? email : translations[currentLang].notProvided}
+${translations[currentLang].phoneEmailBody} ${phone}
+${translations[currentLang].pickupDateLabel} ${pickupDate}
+${translations[currentLang].pickupTimeLabel} ${pickupTime}
+${translations[currentLang].productsEmailBody}
+${summary}
+${translations[currentLang].totalText} ${total} €
+${translations[currentLang].messageEmailBody} ${message ? message : translations[currentLang].notProvided}
+    `.trim();
+    const recipientEmail = currentLang === 'de' ? 'bestellung@ihrebaeckerei.de' : 'order@yourbakery.com';
 
-    // Instead of opening mailto, you'd typically send this to a backend server.
-    // For this client-side example, we'll just show a success alert.
-    console.log('Order Details:', {
-        customer: { name, email, phone, message },
-        pickup: { date: pickupDate, time: pickupTime },
-        items: cart.map(item => ({
-            id: item.product.id,
-            name: currentLang === 'de' ? item.product.name_de : item.product.name_en,
-            quantity: item.quantity,
-            price: item.product.price,
-        })),
-        total: cart.reduce((sum, item) => sum + item.quantity * item.product.price, 0).toFixed(2)
-    });
+    const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(translations[currentLang].newOrderEmailSubject)}&body=${encodeURIComponent(emailBody)}`;
 
+    window.location.href = mailtoLink;
     alert(translations[currentLang].orderSuccessAlert);
-
     cart = [];
     updateCartCount();
     closeOrderForm();
     orderForm.reset();
 }
-
-// Initial setup when the script loads
 document.addEventListener('DOMContentLoaded', () => {
     applyLanguage();
     updateCartCount();
