@@ -6,17 +6,20 @@
     <title>Bäckerei Leipzig – Frische & Genuss</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
+        /* Variables for consistent styling */
         :root {
             --main-bg: #fdf6f0;
             --text-color: #4e342e;
             --accent-color: #a1887f;
             --shadow: rgba(0, 0, 0, 0.1);
         }
+        /* Universal box-sizing and reset margins/paddings */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
+        /* Base body styling */
         body {
             font-family: 'Georgia', serif;
             background: var(--main-bg);
@@ -24,7 +27,7 @@
             line-height: 1.6;
         }
 
-        /* --- Header Styling --- */
+        /* Header Styling */
         header {
             background: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1600&q=80') center/cover;
             color: white;
@@ -38,25 +41,28 @@
             align-items: center;
             justify-content: center;
         }
+        /* Header image (logo) */
         header img {
             width: 200px;
             max-width: 80%;
             height: auto;
             margin-bottom: 20px;
         }
+        /* Header main title */
         header h1 {
             font-size: 3.5rem;
             margin-bottom: 10px;
             text-shadow: 0 3px 6px rgba(0,0,0,0.4);
             line-height: 1.1;
         }
+        /* Header subtitle */
         header p {
             font-size: 1.3rem;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 30px;
         }
 
-        /* --- Buttons (General) --- */
+        /* Button Styling (General) */
         .order-btn, .filter-btn, .order-link {
             background: var(--accent-color);
             color: #fff;
@@ -71,11 +77,12 @@
             display: inline-block;
             margin: 5px;
         }
+        /* Button hover effect */
         .order-btn:hover, .filter-btn:hover, .order-link:hover {
             background: #8d6e63;
         }
 
-        /* --- Fixed Elements: Language Switch & Cart Icon --- */
+        /* Fixed Elements: Language Switch & Cart Icon */
         .lang-switch {
             position: fixed;
             top: 20px;
@@ -86,16 +93,15 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            left: auto;
-            top: auto;
             z-index: 100;
         }
+        /* Cart icon button */
         .cart-icon {
             background: var(--accent-color);
             color: #fff;
             border: none;
-            padding: 15px 18px; /* Increased padding for a larger clickable area */
-            font-size: 1.5rem;   /* Increased font-size for a bigger icon */
+            padding: 15px 18px;
+            font-size: 1.5rem;
             border-radius: 30px;
             cursor: pointer;
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
@@ -105,9 +111,11 @@
             align-items: center;
             justify-content: center;
         }
+        /* Cart icon hover effect */
         .cart-icon:hover {
             background: #8d6e63;
         }
+        /* Cart item count badge */
         .cart-count {
             position: absolute;
             top: -8px;
@@ -122,27 +130,29 @@
             height: 20px;
             text-align: center;
             line-height: 1;
-            display: none;
+            display: none; /* Hidden when no items */
             align-items: center;
             justify-content: center;
         }
 
-        /* --- Main Content & Product Grid --- */
+        /* Main Content & Product Grid */
         main {
-            padding-top: 20px; /* Keep this to ensure header elements don't overlap initial content */
+            padding-top: 20px;
         }
         .products {
             max-width: 1200px;
-            margin: 60px auto; /* You can adjust this margin-top if needed, e.g., 40px auto */
+            margin: 60px auto;
             padding: 0 20px;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
         }
+        /* Common card styling */
         .card-style {
             border-radius: 15px;
             box-shadow: 0 4px 12px var(--shadow);
         }
+        /* Individual product card */
         .product {
             background: #fff;
             overflow: hidden;
@@ -151,16 +161,19 @@
             display: flex;
             flex-direction: column;
         }
+        /* Product card hover effect */
         .product:hover {
             transform: translateY(-5px) scale(1.02);
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
+        /* Product image */
         .product img {
             width: 100%;
             height: 220px;
             object-fit: cover;
             border-radius: 15px 15px 0 0;
         }
+        /* Product information area */
         .product-info {
             padding: 20px;
             text-align: center;
@@ -169,11 +182,13 @@
             flex-direction: column;
             justify-content: space-between;
         }
+        /* Product title */
         .product-info h3 {
             margin-top: 0;
             margin-bottom: 10px;
             font-size: 1.3rem;
         }
+        /* Product price */
         .product-price {
             font-size: 1.2rem;
             color: var(--accent-color);
@@ -181,9 +196,9 @@
             margin-top: auto;
         }
 
-        /* --- Modals (Product Details & Order) --- */
+        /* Modals (Product Details & Order) */
         .modal {
-            display: none;
+            display: none; /* Hidden by default */
             position: fixed;
             top: 0; bottom: 0; left: 0; right: 0;
             background: rgba(0,0,0,0.7);
@@ -192,6 +207,7 @@
             z-index: 1000;
             padding: 20px;
         }
+        /* Modal content box */
         .modal-content {
             background: #fff;
             padding: 30px;
@@ -205,10 +221,12 @@
             max-height: 90vh;
             overflow-y: auto;
         }
+        /* Modal fade-in animation */
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.9); }
             to { opacity: 1; transform: scale(1); }
         }
+        /* Close button for modals */
         .close-btn {
             position: absolute;
             top: 10px;
@@ -220,9 +238,11 @@
             cursor: pointer;
             transition: color 0.2s;
         }
+        /* Close button hover */
         .close-btn:hover {
             color: #333;
         }
+        /* Modal product image */
         #modalImg {
             width: 100%;
             border-radius: 10px;
@@ -230,11 +250,13 @@
             object-fit: cover;
             margin-bottom: 20px;
         }
+        /* Modal product title */
         #modalTitle {
             font-size: 2rem;
             margin-bottom: 10px;
             color: var(--text-color);
         }
+        /* Modal product details (calories, allergens, price) */
         #modalCal, #modalAllergen, #modalPrice {
             margin-bottom: 8px;
             font-size: 1.1rem;
@@ -245,6 +267,7 @@
             font-size: 1.3rem;
             margin-top: 15px;
         }
+        /* Add to cart section in modal */
         .modal-add-to-cart {
             margin-top: 25px;
             display: flex;
@@ -252,6 +275,7 @@
             align-items: center;
             justify-content: center;
         }
+        /* Quantity input in modal */
         .modal-add-to-cart input {
             width: 80px;
             padding: 10px;
@@ -260,6 +284,7 @@
             font-size: 1rem;
             text-align: center;
         }
+        /* Add to cart button in modal */
         .modal-add-to-cart button {
             padding: 10px 20px;
             border-radius: 25px;
@@ -270,11 +295,12 @@
             font-size: 1rem;
             transition: background 0.3s;
         }
+        /* Add to cart button hover */
         .modal-add-to-cart button:hover {
             background: #8d6e63;
         }
 
-        /* --- Order Form within Modal --- */
+        /* Order Form within Modal */
         #orderForm label {
             display: block;
             text-align: left;
@@ -283,6 +309,7 @@
             margin-bottom: 5px;
             color: var(--text-color);
         }
+        /* Input fields in order form */
         #orderForm input[type="text"],
         #orderForm input[type="email"],
         #orderForm input[type="tel"],
@@ -299,16 +326,19 @@
             background: #fffaf3;
             color: #4e342e;
         }
+        /* Textarea specific styling */
         #orderForm textarea {
             resize: vertical;
             min-height: 80px;
         }
+        /* Submit button in order form */
         #orderForm button[type="submit"] {
             width: 100%;
             padding: 15px 22px;
             margin-top: 20px;
             font-size: 1.1rem;
         }
+        /* Cart items display container */
         #cartItemsContainer {
             margin: 25px 0;
             padding: 15px;
@@ -316,12 +346,14 @@
             border-radius: 10px;
             background-color: #f9f9f9;
         }
+        /* Cart items container title */
         #cartItemsContainer h3 {
             margin-top: 0;
             margin-bottom: 15px;
             color: var(--text-color);
             font-size: 1.4rem;
         }
+        /* Individual cart item row */
         .cart-item-row {
             display: flex;
             justify-content: space-between;
@@ -332,9 +364,11 @@
             font-size: 1rem;
             color: #6d4c41;
         }
+        /* Remove border for last cart item */
         .cart-item-row:last-child {
             border-bottom: none;
         }
+        /* Remove item button in cart */
         .cart-item-row button {
             background: none;
             border: none;
@@ -344,9 +378,11 @@
             transition: color 0.2s;
             padding: 5px;
         }
+        /* Remove item button hover */
         .cart-item-row button:hover {
             color: #a12020;
         }
+        /* Cart total display */
         .cart-total {
             font-weight: bold;
             border-top: 2px solid #e0e0e0;
@@ -358,15 +394,16 @@
             color: var(--text-color);
         }
 
-        /* --- Search Bar --- */
+        /* Search Bar */
         #searchBarContainer {
-            display: none;
+            display: none; /* Hidden by default */
             text-align: center;
             margin: 30px auto;
             padding: 0 20px;
             max-width: 500px;
             transition: all 0.4s ease;
         }
+        /* Search input field */
         #searchInput {
             padding: 12px 20px;
             width: 100%;
@@ -378,48 +415,55 @@
             background: #fffaf3;
             color: #6d4c41;
         }
+        /* Search input placeholder color */
         #searchInput::placeholder {
             color: #a1887f;
             opacity: 0.8;
         }
 
-        /* --- Contact Section --- */
+        /* Contact Section */
         section {
             background: #fff3e0;
             padding: 60px 20px;
             text-align: center;
             margin-top: 60px;
         }
+        /* Section main heading */
         section h2 {
             font-size: 2.5rem;
             color: #6d4c41;
             margin-bottom: 25px;
         }
+        /* Section sub-heading */
         section h3 {
             font-size: 1.8rem;
             color: #6d4c41;
             margin-top: 40px;
             margin-bottom: 15px;
         }
+        /* Section paragraphs */
         section p {
             margin-bottom: 10px;
             font-size: 1.1rem;
         }
+        /* Section links */
         section a {
             color: var(--text-color);
             text-decoration: none;
             transition: color 0.2s;
         }
+        /* Section link hover */
         section a:hover {
             color: var(--accent-color);
         }
+        /* Map iframe styling */
         iframe {
             margin-top: 25px;
             border-radius: 15px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* --- Footer --- */
+        /* Footer */
         footer {
             text-align: center;
             padding: 30px 20px;
@@ -428,12 +472,14 @@
             color: #6d4c41;
             margin-top: 0;
         }
+        /* Social media buttons container */
         .social-buttons {
             display: flex;
             justify-content: center;
             gap: 15px;
             margin-bottom: 20px;
         }
+        /* Individual social icon styling */
         .social-icon {
             display: flex;
             align-items: center;
@@ -447,17 +493,20 @@
             font-size: 1.25rem;
             transition: background-color 0.3s, transform 0.2s;
         }
+        /* Social icon hover effect */
         .social-icon:hover {
             transform: scale(1.1);
         }
+        /* Instagram specific hover color */
         .social-icon.instagram:hover {
             background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
         }
+        /* Facebook specific hover color */
         .social-icon.facebook:hover {
             background-color: #3b5998;
         }
 
-        /* --- Responsive Design Adjustments --- */
+        /* Responsive Design Adjustments for smaller screens */
         @media (max-width: 768px) {
             header {
                 padding: 100px 15px 50px;
@@ -471,14 +520,12 @@
             .cart-icon-container {
                 bottom: 15px;
                 right: 15px;
-                left: auto;
-                top: auto;
             }
             .lang-switch {
                 right: 15px;
             }
             .products {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                grid-template-columns: repeat(auto-fit, minminmax(250px, 1fr));
                 gap: 15px;
                 margin: 40px auto;
             }
@@ -522,8 +569,8 @@
                 font-size: 1rem;
             }
             .cart-icon-container {
-                right: 15px; /* CORRECTED: Changed from 70px to 15px for better mobile positioning */
-                bottom: 15px; /* Ensure consistent bottom positioning */
+                right: 15px;
+                bottom: 15px;
             }
             .lang-switch {
                 right: 10px;
@@ -542,8 +589,7 @@
             .product-price {
                 font-size: 1.1rem;
             }
-        }
-    </style>
+        </style>
 </head>
 <body>
 
@@ -631,7 +677,7 @@
     <p><strong data-lang-key="emailLabel">E-Mail:</strong> <a href="mailto:info@baeckerei.de" style="color:#6d4c41;">info@baeckerei.de</a></p>
     <div style="margin:30px auto; max-width:600px;">
       <iframe
-      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2500.563065460592!2d12.373059415701726!3d51.34148427961841!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a652a26c4f4a3f%3A0x6a2b8e3e4a9e1e2!2sLeipzig!5e0!3m2!1sen!2sde!4v1678886400000!5m2!1sen!2sde"
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2506.63582498565!2d12.373030315939226!3d51.33969547961239!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a6520d2a0d1d2b%3A0x41f3e6d1c7f0b2f!2sMarkgrafenstra%C3%9Fe%2010%2C%2004109%20Leipzig!5e0!3m2!1sen!2sde!4v1678888888888!5m2!1sen!2sde"
       width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
     </iframe>
     </div>
@@ -649,6 +695,7 @@
   Macis Bio Bäckerei © 2025 – Mit Liebe gebacken
 </footer>
 <script>
+// Array of product objects
 const products = [
   { id: 1, img:'https://pure-pastry.de/wp-content/uploads/2025/01/Pure_Pastry_Freisteller_DSC07676.jpg', name_de:'Buttercroissant', name_en:'Butter Croissant', cal:280, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 2.80 },
   { id: 2, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3410-768x512.jpg', name_de:'Macis Kruste', name_en:'Macis Crust', cal:310, allergen_de:'Gluten, Milch', allergen_en:'Gluten, Dairy', category:'bread', price: 6.69 },
@@ -658,10 +705,11 @@ const products = [
   { id: 6, img:'https://www.verygourmand.com/img/anblog/b/b-6273bd7170ea4-anblog_thumb.jpg', name_de:'Flan Kuchen', name_en:'Flan Cake', cal:330, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 4.50 },
 ];
 
-let currentLang = 'de';
-let cart = [];
-let currentProductInModal = null;
+let currentLang = 'de'; // Default language set to German
+let cart = []; // Array to store items in the shopping cart
+let currentProductInModal = null; // Stores the product currently displayed in the detail modal
 
+// Get references to DOM elements
 const modal = document.getElementById('modal');
 const orderModal = document.getElementById('orderModal');
 const searchBarContainer = document.getElementById('searchBarContainer');
@@ -671,6 +719,7 @@ const orderForm = document.getElementById('orderForm');
 const cartCountSpan = document.getElementById('cartCount');
 const modalProductQuantityInput = document.getElementById('modalProductQuantity');
 
+// Object containing translations for different languages
 const translations = {
   de: {
     langSwitch: 'Deutsch',
@@ -682,10 +731,7 @@ const translations = {
   	rolls: 'Brötchen',
   	sweets: 'Süßes',
   	searchBtn: '🔍 Suche',
-  	orderNowModalBtn: 'Jetzt bestellen',
   	orderTitle: 'Deine Bestellung',
-  	selectProductsLabel: 'Produkt auswählen',
-  	addBtn: 'Hinzufügen',
   	submitBtn: 'Absenden',
   	contactTitle: 'Kontakt & Öffnungszeiten',
   	addressLabel: 'Adresse:',
@@ -698,7 +744,7 @@ const translations = {
   	noProductsAddedAlert: 'Dein Warenkorb ist leer.',
   	addAtLeastOneProductAlert: 'Bitte füge mindestens ein Produkt zum Warenkorb hinzu.',
   	providePhoneNumberAlert: 'Bitte gib deine Telefonnummer an, um die Bestellung abzuschicken.',
-  	orderSuccessAlert: 'Vielen Dank für deine Bestellung! Wir haben sie erhalten.', // Simplified alert for this example
+  	orderSuccessAlert: 'Vielen Dank für deine Bestellung! Wir haben sie erhalten.',
   	newOrderEmailSubject: 'Neue Bäckerei Bestellung',
   	newOrderEmailBodyTitle: 'Neue Bestellung:',
   	nameEmailBody: 'Name:',
@@ -731,10 +777,7 @@ const translations = {
   	rolls: 'Rolls',
   	sweets: 'Sweets',
   	searchBtn: '🔍 Search',
-  	orderNowModalBtn: 'Order Now',
   	orderTitle: 'Your Order',
-  	selectProductsLabel: 'Select a product',
-  	addBtn: 'Add',
   	submitBtn: 'Submit',
   	contactTitle: 'Contact & Opening Hours',
   	addressLabel: 'Address:',
@@ -747,7 +790,7 @@ const translations = {
   	noProductsAddedAlert: 'Your cart is empty.',
   	addAtLeastOneProductAlert: 'Please add at least one product to the cart.',
   	providePhoneNumberAlert: 'Please provide your phone number to submit the order.',
-  	orderSuccessAlert: 'Thank you for your order! We have received it.', // Simplified alert for this example
+  	orderSuccessAlert: 'Thank you for your order! We have received it.',
   	newOrderEmailSubject: 'New Bakery Order',
   	newOrderEmailBodyTitle: 'New Order:',
   	nameEmailBody: 'Name:',
@@ -772,6 +815,8 @@ const translations = {
   }
 };
 
+
+// Renders products to the grid based on the provided array
 function renderProducts(itemsToRender) {
   productGrid.innerHTML = itemsToRender.map(p => `
     <div class="product card-style" onclick="openModal(${p.id})">
@@ -784,119 +829,131 @@ function renderProducts(itemsToRender) {
   `).join('');
 }
 
+// Opens the product detail modal
 function openModal(productId) {
   const p = products.find(prod => prod.id === productId);
-  if (!p) return;
+  if (!p) return; // Exit if product not found
 
-  currentProductInModal = p;
-  modalProductQuantityInput.value = 1;
+  currentProductInModal = p; // Set the current product
+  modalProductQuantityInput.value = 1; // Reset quantity to 1
 
+  // Populate modal with product details
   document.getElementById('modalImg').src = p.img;
   document.getElementById('modalTitle').textContent = currentLang === 'de' ? p.name_de : p.name_en;
   document.getElementById('modalCal').textContent = (currentLang === 'de' ? 'Kalorien: ' : 'Calories: ') + p.cal + ' kcal';
   document.getElementById('modalAllergen').textContent = (currentLang === 'de' ? 'Allergene: ' : 'Allergens: ') + (currentLang === 'de' ? p.allergen_de : p.allergen_en);
   document.getElementById('modalPrice').textContent = `${p.price.toFixed(2)} €`;
-  modal.style.display = 'flex';
+  modal.style.display = 'flex'; // Show the modal
 }
 
+// Closes the product detail modal
 function closeModal() {
-  modal.style.display = 'none';
-  currentProductInModal = null;
+  modal.style.display = 'none'; // Hide the modal
+  currentProductInModal = null; // Clear the current product
 }
 
+// Opens the order form modal and renders cart items
 function openOrderForm() {
-  orderModal.style.display = 'flex';
-  renderCartItems();
-  setMinimumDateTime();
+  orderModal.style.display = 'flex'; // Show the order modal
+  renderCartItems(); // Update cart display
+  setMinimumDateTime(); // Set minimum date and time for pickup
 }
 
+// Closes the order form modal
 function closeOrderForm() {
-  orderModal.style.display = 'none';
+  orderModal.style.display = 'none'; // Hide the order modal
 }
 
+// Filters products based on category
 function filterProducts(cat) {
   const filtered = cat === 'all' ? products : products.filter(p => p.category === cat);
-  renderProducts(filtered);
+  renderProducts(filtered); // Render filtered products
 }
 
+// Toggles the visibility of the search bar
 function toggleSearch() {
   searchBarContainer.style.display = searchBarContainer.style.display === 'none' || searchBarContainer.style.display === '' ? 'block' : 'none';
   if (searchBarContainer.style.display === 'block') {
-    document.getElementById('searchInput').focus();
+    document.getElementById('searchInput').focus(); // Focus search input if visible
   }
 }
 
+// Searches products based on input value
 function searchProducts() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
+  const q = document.getElementById('searchInput').value.toLowerCase(); // Get search query
   const filtered = products.filter(p => {
     const name = currentLang === 'de' ? p.name_de.toLowerCase() : p.name_en.toLowerCase();
-    return name.includes(q);
+    return name.includes(q); // Check if product name includes query
   });
-  renderProducts(filtered);
+  renderProducts(filtered); // Render search results
 }
 
 
-
+// Applies selected language to all translatable elements
 function applyLanguage() {
   document.querySelectorAll('[data-lang-key]').forEach(el => {
     const key = el.dataset.langKey;
     if (translations[currentLang][key]) {
-      el.textContent = translations[currentLang][key];
+      el.textContent = translations[currentLang][key]; // Update text content
     }
   });
 
   document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
     const key = el.dataset.langPlaceholder;
     if (translations[currentLang][key]) {
-        el.placeholder = translations[currentLang][key];
+        el.placeholder = translations[currentLang][key]; // Update placeholder text
     }
   });
 
-  renderProducts(products);
-  renderCartItems();
+  renderProducts(products); // Re-render products for language update
+  renderCartItems(); // Re-render cart items for language update
 }
 
+// Toggles the current language between German and English
 function toggleLang() {
-  currentLang = currentLang === 'de' ? 'en' : 'de';
-  applyLanguage();
-  document.documentElement.lang = currentLang;
+  currentLang = currentLang === 'de' ? 'en' : 'de'; // Switch language
+  applyLanguage(); // Apply new language
+  document.documentElement.lang = currentLang; // Update HTML lang attribute
 }
 
+// Updates the shopping cart item count display
 function updateCartCount() {
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  cartCountSpan.textContent = totalItems;
-  cartCountSpan.style.display = totalItems > 0 ? 'flex' : 'none';
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0); // Calculate total items
+  cartCountSpan.textContent = totalItems; // Update text
+  cartCountSpan.style.display = totalItems > 0 ? 'flex' : 'none'; // Show/hide based on count
 }
 
+// Adds the current product in the modal to the cart
 function addToCartFromModal() {
-  if (!currentProductInModal) return;
+  if (!currentProductInModal) return; // Exit if no product selected
 
   const quantity = parseInt(modalProductQuantityInput.value);
   if (isNaN(quantity) || quantity <= 0) {
-    alert(translations[currentLang].selectProductQuantityAlert);
+    alert(translations[currentLang].selectProductQuantityAlert); // Alert for invalid quantity
     return;
   }
 
   const existingItemIndex = cart.findIndex(item => item.product.id === currentProductInModal.id);
 
   if (existingItemIndex > -1) {
-    cart[existingItemIndex].quantity += quantity;
+    cart[existingItemIndex].quantity += quantity; // Increase quantity if item exists
   } else {
-    cart.push({ product: currentProductInModal, quantity: quantity });
+    cart.push({ product: currentProductInModal, quantity: quantity }); // Add new item to cart
   }
 
-  closeModal();
-  updateCartCount();
+  closeModal(); // Close product modal
+  updateCartCount(); // Update cart count display
 }
 
+// Renders the items currently in the shopping cart
 function renderCartItems() {
-  selectedProductsList.innerHTML = '';
+  selectedProductsList.innerHTML = ''; // Clear current cart display
   let totalPrice = 0;
 
   if (cart.length === 0) {
     selectedProductsList.innerHTML = `<p style="color:#888; text-align:center;">
       ${translations[currentLang].noProductsAddedAlert}
-    </p>`;
+    </p>`; // Display empty cart message
     return;
   }
 
@@ -909,7 +966,7 @@ function renderCartItems() {
       <button type="button" onclick="removeFromCart(${index})">✖</button>
     `;
     selectedProductsList.appendChild(itemDiv);
-    totalPrice += item.product.price * item.quantity;
+    totalPrice += item.product.price * item.quantity; // Calculate total price
   });
 
   const totalDiv = document.createElement('div');
@@ -918,15 +975,17 @@ function renderCartItems() {
     <span>${translations[currentLang].totalText}</span>
     <span>${totalPrice.toFixed(2)} €</span>
   `;
-  selectedProductsList.appendChild(totalDiv);
+  selectedProductsList.appendChild(totalDiv); // Append total price
 }
 
+// Removes an item from the cart by its index
 function removeFromCart(index) {
-  cart.splice(index, 1);
-  renderCartItems();
-  updateCartCount();
+  cart.splice(index, 1); // Remove item from array
+  renderCartItems(); // Re-render cart display
+  updateCartCount(); // Update cart count
 }
 
+// Sets the minimum date and time for the pickup date/time inputs
 function setMinimumDateTime() {
     const now = new Date();
     const year = now.getFullYear();
@@ -936,13 +995,14 @@ function setMinimumDateTime() {
     const minutes = now.getMinutes().toString().padStart(2, '0');
 
     const minDate = `${year}-${month}-${day}`;
-    document.getElementById('pickupDate').min = minDate;
-    document.getElementById('pickupDate').value = minDate;
+    document.getElementById('pickupDate').min = minDate; // Set min date
+    document.getElementById('pickupDate').value = minDate; // Set current date as default
 
-    document.getElementById('pickupTime').min = `${hours}:${minutes}`;
-    document.getElementById('pickupTime').value = `${hours}:${minutes}`;
+    document.getElementById('pickupTime').min = `${hours}:${minutes}`; // Set min time
+    document.getElementById('pickupTime').value = `${hours}:${minutes}`; // Set current time as default
 }
 
+// Validates the selected pickup time against opening hours and current time
 function validatePickupTime(date, time) {
     const selectedDateTime = new Date(`${date}T${time}`);
     const now = new Date();
@@ -951,13 +1011,13 @@ function validatePickupTime(date, time) {
     const selectedDateOnly = new Date(selectedDateTime.getFullYear(), selectedDateTime.getMonth(), selectedDateTime.getDate());
 
     if (selectedDateOnly < today) {
-        alert(translations[currentLang].pickupDateInvalid);
+        alert(translations[currentLang].pickupDateInvalid); // Alert if date is in the past
         return false;
     }
 
     if (selectedDateOnly.toDateString() === today.toDateString()) {
         if (selectedDateTime < now) {
-            alert(translations[currentLang].pickupTimePast);
+            alert(translations[currentLang].pickupTimePast); // Alert if time is in the past for today
             return false;
         }
     }
@@ -967,32 +1027,32 @@ function validatePickupTime(date, time) {
 
     let isValid = false;
 
-    if (dayOfWeek >= 1 && dayOfWeek <= 6) { 
-        if (selectedHour >= 7 && selectedHour < 20) {
+    if (dayOfWeek >= 1 && dayOfWeek <= 6) { // Monday to Saturday
+        if (selectedHour >= 7 && selectedHour < 20) { // 7 AM to 8 PM
             isValid = true;
         }
     }
-    else if (dayOfWeek === 0) { 
-        if (selectedHour >= 8 && selectedHour < 12) {
+    else if (dayOfWeek === 0) { // Sunday
+        if (selectedHour >= 8 && selectedHour < 12) { // 8 AM to 12 PM
             isValid = true;
         }
     }
 
     if (!isValid) {
-        alert(translations[currentLang].pickupTimeInvalid);
+        alert(translations[currentLang].pickupTimeInvalid); // Alert if outside opening hours
         return false;
     }
     return true;
 }
 
-
+// Handles the submission of the order form
 function submitOrder(event) {
-    event.preventDefault();
+    event.preventDefault(); // Prevent default form submission
 
-    const formData = new FormData(orderForm);
+    const formData = new FormData(orderForm); // Get form data
 
     if (cart.length === 0) {
-        alert(translations[currentLang].addAtLeastOneProductAlert);
+        alert(translations[currentLang].addAtLeastOneProductAlert); // Alert if cart is empty
         return;
     }
 
@@ -1004,22 +1064,26 @@ function submitOrder(event) {
     let message = formData.get('message');
 
     if (!phone) {
-      alert(translations[currentLang].providePhoneNumberAlert);
+      alert(translations[currentLang].providePhoneNumberAlert); // Alert if phone number is missing
       return;
     }
 
     if (!pickupDate || !pickupTime) {
-        alert(translations[currentLang].pickupDateInvalid); 
+        alert(translations[currentLang].pickupDateInvalid); // Alert if pickup date/time is missing
         return;
     }
 
     if (!validatePickupTime(pickupDate, pickupTime)) {
-        return; 
+        return; // Stop submission if time validation fails
     }
+
+    // Prepare email body with order summary
     const summary = cart.map(item => {
         return `${item.quantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en} (${(item.quantity * item.product.price).toFixed(2)} €)`;
-    }).join('\n'); 
+    }).join('\n');
+
     const total = cart.reduce((sum, item) => sum + item.quantity * item.product.price, 0).toFixed(2);
+
     const emailBody = `
 ${translations[currentLang].newOrderEmailBodyTitle}
 ${translations[currentLang].nameEmailBody} ${name}
@@ -1032,20 +1096,27 @@ ${summary}
 ${translations[currentLang].totalText} ${total} €
 ${translations[currentLang].messageEmailBody} ${message ? message : translations[currentLang].notProvided}
     `.trim();
-    const recipientEmail = currentLang === 'de' ? 'bestellung@ihrebaeckerei.de' : 'order@yourbakery.com';
 
+    // Set recipient email
+    const recipientEmail = 'order@yourbakery.com'; // IMPORTANT: Change to your actual bakery email
+
+    // Create mailto link and open it
     const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(translations[currentLang].newOrderEmailSubject)}&body=${encodeURIComponent(emailBody)}`;
-
     window.location.href = mailtoLink;
-    alert(translations[currentLang].orderSuccessAlert);
+
+    alert(translations[currentLang].orderSuccessAlert); // Alert user of successful order
+
+    // Clear cart and reset form after triggering mailto
     cart = [];
     updateCartCount();
     closeOrderForm();
     orderForm.reset();
 }
+
+// Initial setup when the script loads
 document.addEventListener('DOMContentLoaded', () => {
-    applyLanguage();
-    updateCartCount();
+    applyLanguage(); // Apply initial language
+    updateCartCount(); // Update initial cart count
 });
 </script>
 </body>
