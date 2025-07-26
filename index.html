@@ -285,13 +285,35 @@
             font-size: 1.3rem;
             margin-top: 15px;
         }
-        /* NEW: Style for the dietary icon */
-        #modalDietary .icon {
-            font-size: 1.2rem;
-            color: #2e7d32; /* Green for vegan/vegetarian */
-            vertical-align: middle;
-            cursor: help; /* Indicates more info is available on hover */
+        
+        /* NEW: Styles for the dietary badges */
+        .dietary-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: sans-serif;
+            margin: 5px 0;
         }
+      .badge-vegan {
+  background: linear-gradient(45deg, #6cc24a, #4caf50); /* leafy green tones */
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.badge-vegetarian {
+  background: linear-gradient(45deg, #c7d36f, #a4c639); /* fresh herb tones */
+  color: #fff;
+}
+
         .modal-add-to-cart {
             margin-top: 25px;
             display: flex;
@@ -573,9 +595,9 @@
       <button class="close-btn" onclick="closeModal()">×</button>
       <img id="modalImg" src="" alt="" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/250x250?text=Image+Missing';">
       <h3 id="modalTitle"></h3>
+      <p id="modalDietary"></p>
       <p id="modalCal"></p>
       <p id="modalAllergen"></p>
-      <p id="modalDietary"></p>
       <p id="modalPrice"></p>
       <div class="modal-add-to-cart">
         <input type="number" id="modalProductQuantity" value="1" min="1">
@@ -682,8 +704,7 @@ const translations = {
     pickupTimePast: 'Die gewählte Abholzeit liegt in der Vergangenheit.',
     addToCartBtn: 'Zum Warenkorb', yourCart: 'Dein Warenkorb', searchPlaceholder: 'Gib ein, was du suchst...',
     yourName: 'Dein Name', phoneNumber: 'Telefonnummer', emailOptional: 'E-Mail (optional)', messageOptional: 'Nachricht (optional)',
-    notProvided: 'Nicht angegeben', totalText: 'Gesamt:',
-    dietaryLabel: 'Ernährungshinweis:', vegan: 'Vegan', vegetarian: 'Vegetarisch'
+    notProvided: 'Nicht angegeben', totalText: 'Gesamt:'
   },
   en: {
     langSwitch: 'English',
@@ -704,8 +725,7 @@ const translations = {
     pickupTimePast: 'The selected pickup time is in the past.',
     addToCartBtn: 'Add to Cart', yourCart: 'Your Cart', searchPlaceholder: 'Enter what you are looking for...',
     yourName: 'Your Name', phoneNumber: 'Phone Number', emailOptional: 'E-Mail (optional)', messageOptional: 'Message (optional)',
-    notProvided: 'Not provided', totalText: 'Total:',
-    dietaryLabel: 'Dietary Info:', vegan: 'Vegan', vegetarian: 'Vegetarian'
+    notProvided: 'Not provided', totalText: 'Total:'
   }
 };
 
@@ -745,11 +765,14 @@ function openModal(productId) {
   document.getElementById('modalAllergen').textContent = (currentLang === 'de' ? 'Allergene: ' : 'Allergens: ') + (currentLang === 'de' ? p.allergen_de : p.allergen_en);
   
   const modalDietary = document.getElementById('modalDietary');
-  if (p.dietary && translations[currentLang][p.dietary]) {
-      const dietaryText = translations[currentLang][p.dietary];
-      const dietaryLabel = translations[currentLang].dietaryLabel;
-      // Using a leaf icon for both vegan/vegetarian, with the specific term in the title for hover/accessibility.
-      modalDietary.innerHTML = `${dietaryLabel} <i class="fas fa-leaf icon" title="${dietaryText}" aria-label="${dietaryText}"></i>`;
+  if (p.dietary) {
+      let badgeHTML = '';
+      if (p.dietary === 'vegan') {
+          badgeHTML = `<span class="dietary-badge badge-vegan">Vegan</span>`;
+      } else if (p.dietary === 'vegetarian') {
+          badgeHTML = `<span class="dietary-badge badge-vegetarian">Vegetarisch</span>`;
+      }
+      modalDietary.innerHTML = badgeHTML;
       modalDietary.style.display = 'block';
   } else {
       modalDietary.style.display = 'none';
