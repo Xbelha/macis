@@ -27,6 +27,19 @@
             line-height: 1.6;
         }
 
+        /* Accessibility class to hide elements visually but keep them for screen readers */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
         /* Header Styling */
         header {
             background: url('https://macis-leipzig.de/wp-content/uploads/2019/03/Macis-Ba%CC%88ckerei.jpg') center/cover;
@@ -41,28 +54,25 @@
             align-items: center;
             justify-content: center;
         }
-        /* Header image (logo) */
         header img {
             width: 200px;
             max-width: 80%;
             height: auto;
             margin-bottom: 20px;
         }
-        /* Header main title */
         header h1 {
             font-size: 3.5rem;
             margin-bottom: 10px;
             text-shadow: 0 3px 6px rgba(0,0,0,0.4);
             line-height: 1.1;
         }
-        /* Header subtitle */
         header p {
             font-size: 1.3rem;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 30px;
         }
 
-        /* Button Styling (General) */
+        /* Button Styling */
         .order-btn, .filter-btn, .order-link {
             background: var(--accent-color);
             color: #fff;
@@ -77,12 +87,11 @@
             display: inline-block;
             margin: 5px;
         }
-        /* Button hover effect */
         .order-btn:hover, .filter-btn:hover, .order-link:hover {
             background: #8d6e63;
         }
 
-        /* Fixed Elements: Language Switch & Cart Icon */
+        /* Fixed Elements */
         .lang-switch {
             position: fixed;
             top: 20px;
@@ -95,7 +104,6 @@
             right: 20px;
             z-index: 100;
         }
-        /* Cart icon button */
         .cart-icon {
             background: var(--accent-color);
             color: #fff;
@@ -111,11 +119,9 @@
             align-items: center;
             justify-content: center;
         }
-        /* Cart icon hover effect */
         .cart-icon:hover {
             background: #8d6e63;
         }
-        /* Cart item count badge */
         .cart-count {
             position: absolute;
             top: -8px;
@@ -147,12 +153,10 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
         }
-        /* Common card styling */
         .card-style {
             border-radius: 15px;
             box-shadow: 0 4px 12px var(--shadow);
         }
-        /* Individual product card */
         .product {
             background: #fff;
             overflow: hidden;
@@ -161,19 +165,43 @@
             display: flex;
             flex-direction: column;
         }
-        /* Product card hover effect */
         .product:hover {
             transform: translateY(-5px) scale(1.02);
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
-        /* Product image */
+        .product-image-container {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            border-radius: 15px 15px 0 0;
+        }
         .product img {
             width: 100%;
             height: 220px;
             object-fit: cover;
             border-radius: 15px 15px 0 0;
         }
-        /* Product information area */
+        .product-badge {
+            position: absolute;
+            top: 20px;
+            left: -10px;
+            background-color: #d32f2f;
+            color: white;
+            padding: 5px 15px 5px 25px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 0 5px 5px 0;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            transform: rotate(-5deg);
+            transform-origin: 0% 0%;
+        }
+        .product-badge.new {
+            background-color: #4CAF50;
+        }
         .product-info {
             padding: 20px;
             text-align: center;
@@ -182,13 +210,11 @@
             flex-direction: column;
             justify-content: space-between;
         }
-        /* Product title */
         .product-info h3 {
             margin-top: 0;
             margin-bottom: 10px;
             font-size: 1.3rem;
         }
-        /* Product price */
         .product-price {
             font-size: 1.2rem;
             color: var(--accent-color);
@@ -198,7 +224,7 @@
 
         /* Modals (Product Details & Order) */
         .modal {
-            display: none; /* Hidden by default */
+            display: none;
             position: fixed;
             top: 0; bottom: 0; left: 0; right: 0;
             background: rgba(0,0,0,0.7);
@@ -207,7 +233,6 @@
             z-index: 1000;
             padding: 20px;
         }
-        /* Modal content box */
         .modal-content {
             background: #fff;
             padding: 30px;
@@ -221,12 +246,10 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-        /* Modal fade-in animation */
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.9); }
             to { opacity: 1; transform: scale(1); }
         }
-        /* Close button for modals */
         .close-btn {
             position: absolute;
             top: 10px;
@@ -238,11 +261,9 @@
             cursor: pointer;
             transition: color 0.2s;
         }
-        /* Close button hover */
         .close-btn:hover {
             color: #333;
         }
-        /* Modal product image */
         #modalImg {
             width: 100%;
             border-radius: 10px;
@@ -250,14 +271,11 @@
             object-fit: cover;
             margin-bottom: 20px;
         }
-        /* Modal product title */
         #modalTitle {
             font-size: 2rem;
             margin-bottom: 10px;
-            color: var(--text-color);
         }
-        /* Modal product details (calories, allergens, price) */
-        #modalCal, #modalAllergen, #modalPrice {
+        #modalCal, #modalAllergen, #modalDietary, #modalPrice {
             margin-bottom: 8px;
             font-size: 1.1rem;
         }
@@ -267,7 +285,13 @@
             font-size: 1.3rem;
             margin-top: 15px;
         }
-        /* Add to cart section in modal */
+        /* NEW: Style for the dietary icon */
+        #modalDietary .icon {
+            font-size: 1.2rem;
+            color: #2e7d32; /* Green for vegan/vegetarian */
+            vertical-align: middle;
+            cursor: help; /* Indicates more info is available on hover */
+        }
         .modal-add-to-cart {
             margin-top: 25px;
             display: flex;
@@ -275,7 +299,6 @@
             align-items: center;
             justify-content: center;
         }
-        /* Quantity input in modal */
         .modal-add-to-cart input {
             width: 80px;
             padding: 10px;
@@ -284,7 +307,6 @@
             font-size: 1rem;
             text-align: center;
         }
-        /* Add to cart button in modal */
         .modal-add-to-cart button {
             padding: 10px 20px;
             border-radius: 25px;
@@ -295,26 +317,23 @@
             font-size: 1rem;
             transition: background 0.3s;
         }
-        /* Add to cart button hover */
         .modal-add-to-cart button:hover {
             background: #8d6e63;
         }
 
-        /* Order Form within Modal */
+        /* Order Form */
         #orderForm label {
             display: block;
             text-align: left;
             margin-top: 15px;
             font-weight: bold;
             margin-bottom: 5px;
-            color: var(--text-color);
         }
-        /* Input fields in order form */
         #orderForm input[type="text"],
         #orderForm input[type="email"],
         #orderForm input[type="tel"],
         #orderForm input[type="date"],
-        #orderForm select, /* Added select for pickupTime */
+        #orderForm select,
         #orderForm textarea {
             width: 100%;
             padding: 12px;
@@ -325,27 +344,28 @@
             margin-bottom: 15px;
             background: #fffaf3;
             color: #4e342e;
-            -webkit-appearance: none; /* Remove default arrow on select for better styling consistency */
+            -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234e342e%22%20d%3D%22M287%2C197.398L146.2%2C56.602L5.4%2C197.398L0%2C192L146.2%2C45.398L292.4%2C192L287%2C197.398z%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow for select */
+        }
+        #orderForm select {
+             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234e342e%22%20d%3D%22M287%2C197.398L146.2%2C56.602L5.4%2C197.398L0%2C192L146.2%2C45.398L292.4%2C192L287%2C197.398z%22%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat;
             background-position: right 10px top 50%;
             background-size: 12px auto;
         }
-        /* Textarea specific styling */
         #orderForm textarea {
             resize: vertical;
             min-height: 80px;
         }
-        /* Submit button in order form */
         #orderForm button[type="submit"] {
             width: 100%;
             padding: 15px 22px;
             margin-top: 20px;
             font-size: 1.1rem;
         }
-        /* Cart items display container */
+
+        /* Cart Display in Order Form */
         #cartItemsContainer {
             margin: 25px 0;
             padding: 15px;
@@ -353,14 +373,11 @@
             border-radius: 10px;
             background-color: #f9f9f9;
         }
-        /* Cart items container title */
         #cartItemsContainer h3 {
             margin-top: 0;
             margin-bottom: 15px;
-            color: var(--text-color);
             font-size: 1.4rem;
         }
-        /* Individual cart item row */
         .cart-item-row {
             display: flex;
             justify-content: space-between;
@@ -368,14 +385,10 @@
             margin-bottom: 10px;
             padding: 8px 0;
             border-bottom: 1px dashed #e0e0e0;
-            font-size: 1rem;
-            color: #6d4c41;
         }
-        /* Remove border for last cart item */
         .cart-item-row:last-child {
             border-bottom: none;
         }
-        /* Remove item button in cart */
         .cart-item-row button {
             background: none;
             border: none;
@@ -383,13 +396,10 @@
             cursor: pointer;
             font-size: 1.2rem;
             transition: color 0.2s;
-            padding: 5px;
         }
-        /* Remove item button hover */
         .cart-item-row button:hover {
             color: #a12020;
         }
-        /* Cart total display */
         .cart-total {
             font-weight: bold;
             border-top: 2px solid #e0e0e0;
@@ -398,19 +408,16 @@
             display: flex;
             justify-content: space-between;
             font-size: 1.2rem;
-            color: var(--text-color);
         }
 
         /* Search Bar */
         #searchBarContainer {
-            display: none; /* Hidden by default */
+            display: none;
             text-align: center;
             margin: 30px auto;
             padding: 0 20px;
             max-width: 500px;
-            transition: all 0.4s ease;
         }
-        /* Search input field */
         #searchInput {
             padding: 12px 20px;
             width: 100%;
@@ -420,9 +427,7 @@
             outline: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             background: #fffaf3;
-            color: #6d4c41;
         }
-        /* Search input placeholder color */
         #searchInput::placeholder {
             color: #a1887f;
             opacity: 0.8;
@@ -435,39 +440,34 @@
             text-align: center;
             margin-top: 60px;
         }
-        /* Section main heading */
         section h2 {
             font-size: 2.5rem;
             color: #6d4c41;
             margin-bottom: 25px;
         }
-        /* Section sub-heading */
         section h3 {
             font-size: 1.8rem;
             color: #6d4c41;
             margin-top: 40px;
             margin-bottom: 15px;
         }
-        /* Section paragraphs */
         section p {
             margin-bottom: 10px;
             font-size: 1.1rem;
         }
-        /* Section links */
         section a {
             color: var(--text-color);
             text-decoration: none;
             transition: color 0.2s;
         }
-        /* Section link hover */
         section a:hover {
             color: var(--accent-color);
         }
-        /* Map iframe styling */
         iframe {
             margin-top: 25px;
             border-radius: 15px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border:0;
         }
 
         /* Footer */
@@ -477,16 +477,13 @@
             background: #f1e4da;
             font-size: 0.95rem;
             color: #6d4c41;
-            margin-top: 0;
         }
-        /* Social media buttons container */
         .social-buttons {
             display: flex;
             justify-content: center;
             gap: 15px;
             margin-bottom: 20px;
         }
-        /* Individual social icon styling */
         .social-icon {
             display: flex;
             align-items: center;
@@ -500,102 +497,41 @@
             font-size: 1.25rem;
             transition: background-color 0.3s, transform 0.2s;
         }
-        /* Social icon hover effect */
         .social-icon:hover {
             transform: scale(1.1);
         }
-        /* Instagram specific hover color */
         .social-icon.instagram:hover {
             background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
         }
-        /* Facebook specific hover color */
         .social-icon.facebook:hover {
             background-color: #3b5998;
         }
 
-        /* Responsive Design Adjustments for smaller screens */
+        /* Responsive Design */
         @media (max-width: 768px) {
-            header {
-                padding: 100px 15px 50px;
-            }
-            header h1 {
-                font-size: 2.8rem;
-            }
-            header p {
-                font-size: 1.1rem;
-            }
-            .cart-icon-container {
-                bottom: 15px;
-                right: 15px;
-            }
-            .lang-switch {
-                right: 15px;
-            }
-            .products {
-                grid-template-columns: repeat(auto-fit, minminmax(250px, 1fr));
-                gap: 15px;
-                margin: 40px auto;
-            }
-            .modal-content {
-                padding: 20px;
-            }
-            #modalTitle {
-                font-size: 1.6rem;
-            }
-            .modal-add-to-cart {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .modal-add-to-cart input {
-                width: 100%;
-                max-width: 150px;
-            }
-            .modal-add-to-cart button {
-                width: 100%;
-            }
-            #orderForm input, #orderForm textarea, #orderForm button, #orderForm select {
-                font-size: 0.95rem;
-                padding: 10px;
-            }
-            section h2 {
-                font-size: 2rem;
-            }
-            section p {
-                font-size: 1rem;
-            }
+            header { padding: 100px 15px 50px; }
+            header h1 { font-size: 2.8rem; }
+            header p { font-size: 1.1rem; }
+            .cart-icon-container { bottom: 15px; right: 15px; }
+            .lang-switch { right: 15px; }
+            .products { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 40px auto; }
+            .modal-content { padding: 20px; }
+            #modalTitle { font-size: 1.6rem; }
+            .modal-add-to-cart { flex-direction: column; gap: 10px; }
+            .modal-add-to-cart input, .modal-add-to-cart button { width: 100%; max-width: 150px; }
+            #orderForm input, #orderForm textarea, #orderForm button, #orderForm select { padding: 10px; }
+            section h2 { font-size: 2rem; }
+            section p { font-size: 1rem; }
         }
 
         @media (max-width: 480px) {
-            header {
-                padding: 80px 10px 40px;
-            }
-            header h1 {
-                 font-size: 1.8rem;
-            }
-            header p {
-                font-size: 0.9rem;
-            }
-            .cart-icon-container {
-                right: 15px;
-                bottom: 15px;
-            }
-            .lang-switch {
-                right: 10px;
-            }
-            .filter-btn {
-                padding: 10px 15px;
-                font-size: 0.9rem;
-            }
-            .products {
-                grid-template-columns: 1fr;
-                padding: 0 15px;
-            }
-            .product-info h3 {
-                font-size: 1.2rem;
-            }
-            .product-price {
-                font-size: 1.1rem;
-            }
+            header { padding: 80px 10px 40px; }
+            header h1 { font-size: 1.8rem; }
+            header p { font-size: 0.9rem; }
+            .filter-btn { padding: 10px 15px; font-size: 0.9rem; }
+            .products { grid-template-columns: 1fr; padding: 0 15px; }
+            .product-info h3 { font-size: 1.2rem; }
+            .product-price { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -619,7 +555,6 @@
 
 <main>
   <div style="text-align:center; margin:20px 0;">
-  
     <button class="filter-btn" onclick="filterProducts('all')" data-lang-key="allBakedGoods">Alle Backwaren</button>
     <button class="filter-btn" onclick="filterProducts('bread')" data-lang-key="bread">Brot</button>
     <button class="filter-btn" onclick="filterProducts('broetchen')" data-lang-key="rolls">Brötchen</button>
@@ -636,10 +571,11 @@
     <div class="modal" id="modal">
     <div class="modal-content card-style">
       <button class="close-btn" onclick="closeModal()">×</button>
-      <img id="modalImg" src="" alt="" loading="lazy">
+      <img id="modalImg" src="" alt="" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/250x250?text=Image+Missing';">
       <h3 id="modalTitle"></h3>
       <p id="modalCal"></p>
       <p id="modalAllergen"></p>
+      <p id="modalDietary"></p>
       <p id="modalPrice"></p>
       <div class="modal-add-to-cart">
         <input type="number" id="modalProductQuantity" value="1" min="1">
@@ -653,13 +589,13 @@
       <button class="close-btn" onclick="closeOrderForm()">×</button>
       <h2 data-lang-key="orderTitle">Bestellung</h2>
       <form id="orderForm" onsubmit="submitOrder(event)">
-        <label for="nameInput" class="sr-only" data-lang-key="yourName"></label>
+        <label for="nameInput" class="sr-only" data-lang-key="yourName">Dein Name</label>
         <input type="text" id="nameInput" name="name" data-lang-placeholder="yourName" required>
 
-        <label for="phoneInput" class="sr-only" data-lang-key="phoneNumber"></label>
+        <label for="phoneInput" class="sr-only" data-lang-key="phoneNumber">Telefonnummer</label>
         <input type="tel" id="phoneInput" name="phone" data-lang-placeholder="phoneNumber" required>
 
-        <label for="emailInput" class="sr-only" data-lang-key="emailOptional"></label>
+        <label for="emailInput" class="sr-only" data-lang-key="emailOptional">E-Mail (optional)</label>
         <input type="email" id="emailInput" name="email" data-lang-placeholder="emailOptional">
 
         <label for="pickupDate" data-lang-key="pickupDateLabel">Abholdatum:</label>
@@ -682,13 +618,13 @@
   <section id="contact-section">
     <h2 data-lang-key="contactTitle">Kontakt & Öffnungszeiten</h2>
     <p><strong data-lang-key="addressLabel">Adresse:</strong> Markgrafenstraße 10, 04109 Leipzig</p>
-    <p><strong data-lang-key="phoneLabel">Telefon:</strong> <a href="tel:+491234567890" style="color:#6d4c41;">+49 123 4567890</a></p>
-    <p><strong data-lang-key="emailLabel">E-Mail:</strong> <a href="mailto:info@baeckerei.de" style="color:#6d4c41;">info@baeckerei.de</a></p>
+    <p><strong data-lang-key="phoneLabel">Telefon:</strong> <a href="tel:+49000000000" style="color:#6d4c41;">+49 (0) 123 456789</a></p>
+    <p><strong data-lang-key="emailLabel">E-Mail:</strong> <a href="mailto:info@beispiel-baeckerei.de" style="color:#6d4c41;">info@beispiel-baeckerei.de</a></p>
     <div style="margin:30px auto; max-width:600px;">
       <iframe
-      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2506.63582498565!2d12.373030315939226!3d51.33969547961239!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a6520d2a0d1d2b%3A0x41f3e6d1c7f0b2f!2sMarkgrafenstra%C3%9Fe%2010%2C%2004109%20Leipzig!5e0!3m2!1sen!2sde!4v1678888888888!5m2!1sen!2sde"
-      width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-    </iframe>
+        src="https://maps.google.com/maps?q=Markgrafenstra%C3%9Fe%2010%2C%2004109%20Leipzig&t=&z=15&ie=UTF8&iwloc=&output=embed"
+        width="100%" height="300" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
     </div>
     <h3 data-lang-key="openingHoursTitle">Öffnungszeiten</h3>
     <p data-lang-key="openingHoursWeekday">Montag – Samstag: 7:00 – 19:00 Uhr</p>
@@ -704,168 +640,130 @@
   Macis Bio Bäckerei © 2025 – Mit Liebe gebacken
 </footer>
 <script>
-// Array of product objects
 const products = [
-  { id: 1, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3474-768x512.jpg', name_de:'Landbrot', name_en:'Landbread', cal:350, allergen_de:'Gluten, Soja', allergen_en:'Gluten, Soy', category:'bread', price: 6.99 },
-  { id: 2, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3410-768x512.jpg', name_de:'Macis Kruste', name_en:'Macis Crust', cal:310, allergen_de:'Gluten, Milch', allergen_en:'Gluten, Dairy', category:'bread', price: 6.69 },
-  { id: 3, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3655-768x512.jpg', name_de:'Das Kernige', name_en:'The Seedy One', cal:360, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'bread', price: 5.99 },
-  { id: 4, img:'https://m.media-amazon.com/images/I/61-7rqHsRqL._UF894,1000_QL80_.jpg', name_de:'RVK Brötchen', name_en:'RVK Roll', cal:250, allergen_de:'Gluten, Sesam', allergen_en:'Gluten, Sesame', category:'broetchen', price: 0.99 },
-  { id: 5, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3617-768x512.jpg', name_de:'Grand Gourmet', name_en:'Grand Gourmet', cal:350, allergen_de:'Gluten, Soja', allergen_en:'Gluten, Soy', category:'bread', price: 8.69 },
-  { id: 6, img:'https://www.verygourmand.com/img/anblog/b/b-6273bd7170ea4-anblog_thumb.jpg', name_de:'Flan Kuchen', name_en:'Flan Cake', cal:330, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 4.50 },
-  { id: 7, img:'https://pure-pastry.de/wp-content/uploads/2025/01/Pure_Pastry_Freisteller_DSC07676.jpg', name_de:'Buttercroissant', name_en:'Butter Croissant', cal:280, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 2.80 },
-  { id: 8, img:'https://www.arctis.de/wp-content/uploads/2023/07/032-Laugenbroetchen.jpg', name_de:'Laugenbrötchen', name_en:'Pretzel Roll', cal:220, allergen_de:'Gluten', allergen_en:'Gluten', category:'broetchen', price: 1.50 }
+  { id: 1, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3474-768x512.jpg', name_de:'Landbrot', name_en:'Landbread', cal:350, allergen_de:'Gluten, Soja', allergen_en:'Gluten, Soy', category:'bread', price: 6.99, badge: 'new', dietary: 'vegan' },
+  { id: 2, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3410-768x512.jpg', name_de:'Macis Kruste', name_en:'Macis Crust', cal:310, allergen_de:'Gluten, Milch', allergen_en:'Gluten, Dairy', category:'bread', price: 6.69, dietary: 'vegetarian' },
+  { id: 3, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3655-768x512.jpg', name_de:'Das Kernige', name_en:'The Seedy One', cal:360, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'bread', price: 5.99, dietary: 'vegetarian' },
+  { id: 4, img:'https://m.media-amazon.com/images/I/61-7rqHsRqL._UF894,1000_QL80_.jpg', name_de:'RVK Brötchen', name_en:'RVK Roll', cal:250, allergen_de:'Gluten, Sesam', allergen_en:'Gluten, Sesame', category:'broetchen', price: 0.99, dietary: 'vegan' },
+  { id: 5, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3617-768x512.jpg', name_de:'Grand Gourmet', name_en:'Grand Gourmet', cal:350, allergen_de:'Gluten, Soja', allergen_en:'Gluten, Soy', category:'bread', price: 8.69, dietary: 'vegan' },
+  { id: 6, img:'https://www.verygourmand.com/img/anblog/b/b-6273bd7170ea4-anblog_thumb.jpg', name_de:'Flan Kuchen', name_en:'Flan Cake', cal:330, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 4.50, dietary: 'vegetarian' },
+  { id: 7, img:'https://pure-pastry.de/wp-content/uploads/2025/01/Pure_Pastry_Freisteller_DSC07676.jpg', name_de:'Buttercroissant', name_en:'Butter Croissant', cal:280, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 2.80, dietary: 'vegetarian' },
+  { id: 8, img:'https://www.arctis.de/wp-content/uploads/2023/07/032-Laugenbroetchen.jpg', name_de:'Laugenbrötchen', name_en:'Pretzel Roll', cal:220, allergen_de:'Gluten', allergen_en:'Gluten', category:'broetchen', price: 1.50, dietary: 'vegan' }
 ];
 
-let currentLang = 'de'; // Default language set to German
+let currentLang = 'de';
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
-let currentProductInModal = null; // Stores the product currently displayed in the detail modal
+let currentProductInModal = null;
 
-// Get references to DOM elements
 const modal = document.getElementById('modal');
 const orderModal = document.getElementById('orderModal');
-const searchBarContainer = document.getElementById('searchBarContainer');
 const productGrid = document.getElementById('productGrid');
-const selectedProductsList = document.getElementById('selectedProductsList');
-const orderForm = document.getElementById('orderForm');
 const cartCountSpan = document.getElementById('cartCount');
-const modalProductQuantityInput = document.getElementById('modalProductQuantity');
 const pickupDateInput = document.getElementById('pickupDate');
 const pickupTimeSelect = document.getElementById('pickupTime');
 
-
-// Object containing translations for different languages
 const translations = {
   de: {
     langSwitch: 'Deutsch',
     mainTitle: 'Macis Biobäckerei in Leipzig',
     subTitle: 'Traditionelle Backkunst, jeden Tag frisch',
     orderNowBtn: 'Jetzt bestellen',
-    allBakedGoods: 'Alle Backwaren',
-  	bread: 'Brot',
-  	rolls: 'Brötchen',
-  	sweets: 'Süßes',
-  	searchBtn: '🔍 Suche',
-  	orderTitle: 'Deine Bestellung',
-  	submitBtn: 'Absenden',
-  	contactTitle: 'Kontakt & Öffnungszeiten',
-  	addressLabel: 'Adresse:',
-  	phoneLabel: 'Telefon:',
-  	emailLabel: 'E-Mail:',
-  	openingHoursTitle: 'Öffnungszeiten',
-  	openingHoursWeekday: 'Montag – Samstag: 7:00 – 19:00 Uhr',
-  	openingHoursSunday: 'Sonntag: 8:00 – 12:00 Uhr',
-  	selectProductQuantityAlert: 'Bitte gib eine gültige Menge ein.',
-  	noProductsAddedAlert: 'Dein Warenkorb ist leer.',
-  	addAtLeastOneProductAlert: 'Bitte füge mindestens ein Produkt zum Warenkorb hinzu.',
-  	providePhoneNumberAlert: 'Bitte gib deine Telefonnummer an, um die Bestellung abzuschicken.',
-  	orderSuccessAlert: 'Vielen Dank für deine Bestellung! Wir haben sie erhalten.',
-  	newOrderEmailSubject: 'Neue Bäckerei Bestellung',
-  	newOrderEmailBodyTitle: 'Neue Bestellung:',
-  	nameEmailBody: 'Name:',
-  	emailEmailBody: 'E-Mail:',
-  	phoneEmailBody: 'Telefon:',
-  	productsEmailBody: 'Produkte:',
-  	messageEmailBody: 'Nachricht:',
-    pickupDateLabel: 'Abholdatum:',
-    pickupTimeLabel: 'Abholzeit (Uhr):',
+    allBakedGoods: 'Alle Backwaren', bread: 'Brot', rolls: 'Brötchen', sweets: 'Süßes', searchBtn: '🔍 Suche',
+    orderTitle: 'Deine Bestellung', submitBtn: 'Absenden', contactTitle: 'Kontakt & Öffnungszeiten',
+    addressLabel: 'Adresse:', phoneLabel: 'Telefon:', emailLabel: 'E-Mail:',
+    openingHoursTitle: 'Öffnungszeiten', openingHoursWeekday: 'Montag – Samstag: 7:00 – 19:00 Uhr', openingHoursSunday: 'Sonntag: 8:00 – 12:00 Uhr',
+    selectProductQuantityAlert: 'Bitte gib eine gültige Menge ein.', noProductsAddedAlert: 'Dein Warenkorb ist leer.',
+    addAtLeastOneProductAlert: 'Bitte füge mindestens ein Produkt zum Warenkorb hinzu.', providePhoneNumberAlert: 'Bitte gib deine Telefonnummer an, um die Bestellung abzuschicken.',
+    orderSuccessAlert: 'Vielen Dank für deine Bestellung! Wir haben sie erhalten.',
+    newOrderEmailSubject: 'Neue Bäckerei Bestellung', newOrderEmailBodyTitle: 'Neue Bestellung:',
+    nameEmailBody: 'Name:', emailEmailBody: 'E-Mail:', phoneEmailBody: 'Telefon:', productsEmailBody: 'Produkte:', messageEmailBody: 'Nachricht:',
+    pickupDateLabel: 'Abholdatum:', pickupTimeLabel: 'Abholzeit:',
     pickupTimeInvalid: 'Bitte wähle eine Abholzeit innerhalb der Öffnungszeiten (Mo-Sa: 7-19 Uhr, So: 8-12 Uhr).',
     pickupTimePast: 'Die gewählte Abholzeit liegt in der Vergangenheit.',
-    pickupDateInvalid: 'Bitte wähle ein gültiges Abholdatum in der Zukunft.',
-    addToCartBtn: 'Zum Warenkorb',
-    yourCart: 'Dein Warenkorb',
-    searchPlaceholder: 'Gib ein, was du suchst...',
-    yourName: 'Dein Name',
-    phoneNumber: 'Telefonnummer',
-    emailOptional: 'E-Mail (optional)',
-    messageOptional: 'Nachricht (optional)',
-  	notProvided: 'Nicht angegeben',
-  	totalText: 'Gesamt:'
+    addToCartBtn: 'Zum Warenkorb', yourCart: 'Dein Warenkorb', searchPlaceholder: 'Gib ein, was du suchst...',
+    yourName: 'Dein Name', phoneNumber: 'Telefonnummer', emailOptional: 'E-Mail (optional)', messageOptional: 'Nachricht (optional)',
+    notProvided: 'Nicht angegeben', totalText: 'Gesamt:',
+    dietaryLabel: 'Ernährungshinweis:', vegan: 'Vegan', vegetarian: 'Vegetarisch'
   },
   en: {
     langSwitch: 'English',
     mainTitle: 'Macis Organic Bakery in Leipzig',
     subTitle: 'Traditional Baking, Fresh Every Day',
     orderNowBtn: 'Order Now',
-    allBakedGoods: 'All Baked Goods',
-  	bread: 'Bread',
-  	rolls: 'Rolls',
-  	sweets: 'Sweets',
-  	searchBtn: '🔍 Search',
-  	orderTitle: 'Your Order',
-  	submitBtn: 'Submit',
-  	contactTitle: 'Contact & Opening Hours',
-  	addressLabel: 'Address:',
-  	phoneLabel: 'Phone:',
-  	emailLabel: 'Email:',
-  	openingHoursTitle: 'Opening Hours',
-  	openingHoursWeekday: 'Monday – Saturday: 7:00 AM – 7:00 PM',
-  	openingHoursSunday: 'Sunday: 8:00 AM – 12:00 PM',
-  	selectProductQuantityAlert: 'Please enter a valid quantity.',
-  	noProductsAddedAlert: 'Your cart is empty.',
-  	addAtLeastOneProductAlert: 'Please add at least one product to the cart.',
-  	providePhoneNumberAlert: 'Please provide your phone number to submit the order.',
-  	orderSuccessAlert: 'Thank you for your order! We have received it.',
-  	newOrderEmailSubject: 'New Bakery Order',
-  	newOrderEmailBodyTitle: 'New Order:',
-  	nameEmailBody: 'Name:',
-  	emailEmailBody: 'Email:',
-  	phoneEmailBody: 'Phone:',
-  	productsEmailBody: 'Products:',
-  	messageEmailBody: 'Message:',
-    pickupDateLabel: 'Pickup Date:',
-    pickupTimeLabel: 'Pickup Time (Hour):',
+    allBakedGoods: 'All Baked Goods', bread: 'Bread', rolls: 'Rolls', sweets: 'Sweets', searchBtn: '🔍 Search',
+    orderTitle: 'Your Order', submitBtn: 'Submit', contactTitle: 'Contact & Opening Hours',
+    addressLabel: 'Address:', phoneLabel: 'Phone:', emailLabel: 'Email:',
+    openingHoursTitle: 'Opening Hours', openingHoursWeekday: 'Monday – Saturday: 7:00 AM – 7:00 PM', openingHoursSunday: 'Sunday: 8:00 AM – 12:00 PM',
+    selectProductQuantityAlert: 'Please enter a valid quantity.', noProductsAddedAlert: 'Your cart is empty.',
+    addAtLeastOneProductAlert: 'Please add at least one product to the cart.', providePhoneNumberAlert: 'Please provide your phone number to submit the order.',
+    orderSuccessAlert: 'Thank you for your order! We have received it.',
+    newOrderEmailSubject: 'New Bakery Order', newOrderEmailBodyTitle: 'New Order:',
+    nameEmailBody: 'Name:', emailEmailBody: 'Email:', phoneEmailBody: 'Phone:', productsEmailBody: 'Products:', messageEmailBody: 'Message:',
+    pickupDateLabel: 'Pickup Date:', pickupTimeLabel: 'Pickup Time:',
     pickupTimeInvalid: 'Please select a pickup time within opening hours (Mon-Sat: 7 AM - 7 PM, Sun: 8 AM - 12 PM).',
     pickupTimePast: 'The selected pickup time is in the past.',
-    pickupDateInvalid: 'Please select a valid pickup date in the future.',
-    addToCartBtn: 'Add to Cart',
-    yourCart: 'Your Cart',
-    searchPlaceholder: 'Enter what you are looking for...',
-    yourName: 'Your Name',
-    phoneNumber: 'Phone Number',
-    emailOptional: 'E-Mail (optional)',
-    messageOptional: 'Message (optional)',
-  	notProvided: 'Not provided',
-  	totalText: 'Total:'
+    addToCartBtn: 'Add to Cart', yourCart: 'Your Cart', searchPlaceholder: 'Enter what you are looking for...',
+    yourName: 'Your Name', phoneNumber: 'Phone Number', emailOptional: 'E-Mail (optional)', messageOptional: 'Message (optional)',
+    notProvided: 'Not provided', totalText: 'Total:',
+    dietaryLabel: 'Dietary Info:', vegan: 'Vegan', vegetarian: 'Vegetarian'
   }
 };
 
-
-// Renders products to the grid based on the provided array
 function renderProducts(itemsToRender) {
-  productGrid.innerHTML = itemsToRender.map(p => `
-    <div class="product card-style" onclick="openModal(${p.id})">
-      <img src="${p.img}" alt="${currentLang === 'de' ? p.name_de : p.name_en}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/220x220?text=Image+Missing';">
-      <div class="product-info">
-        <h3>${currentLang === 'de' ? p.name_de : p.name_en}</h3>
-        <p class="product-price">${p.price.toFixed(2)} €</p>
+  productGrid.innerHTML = itemsToRender.map(p => {
+    let badgeText = '';
+    let badgeClass = '';
+    if (p.badge === 'new') {
+      badgeClass = `product-badge new`;
+      badgeText = currentLang === 'de' ? 'Neu!' : 'New!';
+    }
+    return `
+      <div class="product card-style" onclick="openModal(${p.id})">
+        <div class="product-image-container">
+          <img src="${p.img}" alt="${currentLang === 'de' ? p.name_de : p.name_en}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/220x220?text=Image+Missing';">
+          ${p.badge ? `<div class="${badgeClass}">${badgeText}</div>` : ''}
+        </div>
+        <div class="product-info">
+          <h3>${currentLang === 'de' ? p.name_de : p.name_en}</h3>
+          <p class="product-price">${p.price.toFixed(2)} €</p>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
-// Opens the product detail modal
 function openModal(productId) {
   const p = products.find(prod => prod.id === productId);
   if (!p) return;
 
   currentProductInModal = p;
-  modalProductQuantityInput.value = 1;
+  document.getElementById('modalProductQuantity').value = 1;
 
   document.getElementById('modalImg').src = p.img;
   document.getElementById('modalTitle').textContent = currentLang === 'de' ? p.name_de : p.name_en;
   document.getElementById('modalCal').textContent = (currentLang === 'de' ? 'Kalorien: ' : 'Calories: ') + p.cal + ' kcal';
   document.getElementById('modalAllergen').textContent = (currentLang === 'de' ? 'Allergene: ' : 'Allergens: ') + (currentLang === 'de' ? p.allergen_de : p.allergen_en);
+  
+  const modalDietary = document.getElementById('modalDietary');
+  if (p.dietary && translations[currentLang][p.dietary]) {
+      const dietaryText = translations[currentLang][p.dietary];
+      const dietaryLabel = translations[currentLang].dietaryLabel;
+      // Using a leaf icon for both vegan/vegetarian, with the specific term in the title for hover/accessibility.
+      modalDietary.innerHTML = `${dietaryLabel} <i class="fas fa-leaf icon" title="${dietaryText}" aria-label="${dietaryText}"></i>`;
+      modalDietary.style.display = 'block';
+  } else {
+      modalDietary.style.display = 'none';
+  }
+
   document.getElementById('modalPrice').textContent = `${p.price.toFixed(2)} €`;
   modal.style.display = 'flex';
 }
 
-// Closes the product detail modal
 function closeModal() {
   modal.style.display = 'none';
   currentProductInModal = null;
 }
 
-// Opens the order form modal and renders cart items
 function openOrderForm() {
   orderModal.style.display = 'flex';
   renderCartItems();
@@ -873,196 +771,146 @@ function openOrderForm() {
   populatePickupHours();
 }
 
-// Closes the order form modal
 function closeOrderForm() {
   orderModal.style.display = 'none';
 }
 
-// Filters products based on category
 function filterProducts(cat) {
   const filtered = cat === 'all' ? products : products.filter(p => p.category === cat);
   renderProducts(filtered);
 }
 
-// Toggles the visibility of the search bar
 function toggleSearch() {
-  searchBarContainer.style.display = searchBarContainer.style.display === 'none' || searchBarContainer.style.display === '' ? 'block' : 'none';
-  if (searchBarContainer.style.display === 'block') {
+  const searchBarContainer = document.getElementById('searchBarContainer');
+  const isHidden = searchBarContainer.style.display === 'none' || searchBarContainer.style.display === '';
+  searchBarContainer.style.display = isHidden ? 'block' : 'none';
+  if (isHidden) {
     document.getElementById('searchInput').focus();
   }
 }
 
-// Searches products based on input value
 function searchProducts() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const filtered = products.filter(p => {
-    const name = currentLang === 'de' ? p.name_de.toLowerCase() : p.name_en.toLowerCase();
-    return name.includes(q);
-  });
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = products.filter(p => (currentLang === 'de' ? p.name_de : p.name_en).toLowerCase().includes(query));
   renderProducts(filtered);
 }
 
-
-// Applies selected language to all translatable elements
 function applyLanguage() {
+  document.documentElement.lang = currentLang;
   document.querySelectorAll('[data-lang-key]').forEach(el => {
     const key = el.dataset.langKey;
-    if (translations[currentLang][key]) {
-      el.textContent = translations[currentLang][key];
-    }
+    if (translations[currentLang][key]) el.textContent = translations[currentLang][key];
   });
-
   document.querySelectorAll('[data-lang-placeholder]').forEach(el => {
     const key = el.dataset.langPlaceholder;
-    if (translations[currentLang][key]) {
-        el.placeholder = translations[currentLang][key];
-    }
+    if (translations[currentLang][key]) el.placeholder = translations[currentLang][key];
   });
-
-  // For accessibility, update the `aria-label` or `title` for screen readers if applicable.
-  // Not strictly needed here as placeholders serve this for inputs.
-  // For the 'sr-only' labels:
-  document.querySelectorAll('.sr-only').forEach(el => {
-    const key = el.dataset.langKey;
-    if (translations[currentLang][key]) {
-        el.textContent = translations[currentLang][key]; // Update the hidden text for screen readers
-    }
-  });
-
-
   renderProducts(products);
   renderCartItems();
 }
 
-// Toggles the current language between German and English
 function toggleLang() {
   currentLang = currentLang === 'de' ? 'en' : 'de';
   applyLanguage();
-  document.documentElement.lang = currentLang;
 }
 
-// Updates the shopping cart item count display
 function updateCartCount() {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   cartCountSpan.textContent = totalItems;
   cartCountSpan.style.display = totalItems > 0 ? 'flex' : 'none';
   localStorage.setItem('cart', JSON.stringify(cart));
-
 }
 
-// Adds the current product in the modal to the cart
 function addToCartFromModal() {
   if (!currentProductInModal) return;
-
-  const quantity = parseInt(modalProductQuantityInput.value);
+  const quantity = parseInt(document.getElementById('modalProductQuantity').value);
   if (isNaN(quantity) || quantity <= 0) {
     alert(translations[currentLang].selectProductQuantityAlert);
     return;
   }
 
   const existingItemIndex = cart.findIndex(item => item.product.id === currentProductInModal.id);
-
   if (existingItemIndex > -1) {
     cart[existingItemIndex].quantity += quantity;
   } else {
     cart.push({ product: currentProductInModal, quantity: quantity });
   }
-
   closeModal();
   updateCartCount();
 }
 
-// Renders the items currently in the shopping cart
 function renderCartItems() {
+  const selectedProductsList = document.getElementById('selectedProductsList');
   selectedProductsList.innerHTML = '';
   let totalPrice = 0;
 
   if (cart.length === 0) {
-    selectedProductsList.innerHTML = `<p style="color:#888; text-align:center;">
-      ${translations[currentLang].noProductsAddedAlert}
-    </p>`;
+    selectedProductsList.innerHTML = `<p style="text-align:center;">${translations[currentLang].noProductsAddedAlert}</p>`;
     return;
   }
 
   cart.forEach((item, index) => {
-    const itemPrice = (item.product.price * item.quantity).toFixed(2);
+    const itemPrice = (item.product.price * item.quantity);
+    totalPrice += itemPrice;
     selectedProductsList.innerHTML += `
       <div class="cart-item-row">
-        <span>${currentLang === 'de' ? item.product.name_de : item.product.name_en} × ${item.quantity} (${itemPrice} €)</span>
+        <span>${currentLang === 'de' ? item.product.name_de : item.product.name_en} × ${item.quantity} (${itemPrice.toFixed(2)} €)</span>
         <button type="button" onclick="removeFromCart(${index})">✖</button>
       </div>
     `;
-    totalPrice += item.product.price * item.quantity;
   });
 
   selectedProductsList.innerHTML += `
     <div class="cart-total">
       <span>${translations[currentLang].totalText}</span>
       <span>${totalPrice.toFixed(2)} €</span>
-    </div>
-  `;
+    </div>`;
 }
 
-// Removes an item from the cart by its index
 function removeFromCart(index) {
   cart.splice(index, 1);
   renderCartItems();
   updateCartCount();
-  localStorage.setItem('cart', JSON.stringify(cart));
-
 }
 
-// Sets the minimum date for the pickup date input and populates hours
 function setMinimumDateTime() {
     const now = new Date();
     const year = now.getFullYear();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const day = now.getDate().toString().padStart(2, '0');
-
     const minDate = `${year}-${month}-${day}`;
     pickupDateInput.min = minDate;
-    pickupDateInput.value = minDate;
+    if (pickupDateInput.value < minDate) {
+        pickupDateInput.value = minDate;
+    }
 }
 
-// Populates the pickupTime select element with valid hours
 function populatePickupHours() {
     pickupTimeSelect.innerHTML = '';
-
     const selectedDateStr = pickupDateInput.value;
     if (!selectedDateStr) return;
 
     const selectedDate = new Date(selectedDateStr + 'T00:00:00');
     const now = new Date();
-    const currentHour = now.getHours();
-
     const isToday = selectedDate.toDateString() === now.toDateString();
-    const dayOfWeek = selectedDate.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const dayOfWeek = selectedDate.getDay(); // 0=Sun, 1=Mon...
 
     let startHour, endHour;
-
-    if (dayOfWeek >= 1 && dayOfWeek <= 6) { // Monday to Saturday
-        startHour = 7;
-        endHour = 19;
-    } else if (dayOfWeek === 0) { // Sunday
-        startHour = 8;
-        endHour = 12;
-    } else {
-        return;
+    if (dayOfWeek === 0) { // Sunday
+        startHour = 8; endHour = 12;
+    } else { // Monday-Saturday
+        startHour = 7; endHour = 19;
     }
-
+    
     let firstAvailableHourSet = false;
-
-    for (let hour = startHour; hour <= endHour; hour++) {
+    for (let hour = startHour; hour < endHour; hour++) {
         const option = document.createElement('option');
         option.value = hour.toString().padStart(2, '0');
-        option.textContent = `${hour}:00 Uhr`;
-
-        if (isToday && hour < currentHour) {
+        option.textContent = `${hour}:00`;
+        if (isToday && hour <= now.getHours()) {
             option.disabled = true;
         }
-
         pickupTimeSelect.appendChild(option);
-
         if (!firstAvailableHourSet && !option.disabled) {
             option.selected = true;
             firstAvailableHourSet = true;
@@ -1070,99 +918,52 @@ function populatePickupHours() {
     }
 }
 
-// Validates the selected pickup time (hour only) against opening hours and current time
-function validatePickupTime(date, hour) {
-    const selectedHour = parseInt(hour, 10);
-    const now = new Date();
-    const currentHour = now.getHours();
-
-    const selectedDate = new Date(date);
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-    const selectedDateOnly = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
-    if (selectedDateOnly < today) {
-        alert(translations[currentLang].pickupDateInvalid);
+function validatePickupTime(dateStr, hourStr) {
+    const selectedDateTime = new Date(`${dateStr}T${hourStr}:00:00`);
+    if (selectedDateTime < new Date()) {
+        alert(translations[currentLang].pickupTimePast);
         return false;
     }
-
-    if (selectedDateOnly.toDateString() === today.toDateString()) {
-        if (selectedHour < currentHour) {
-            alert(translations[currentLang].pickupTimePast);
-            return false;
-        }
-    }
-
-    const dayOfWeek = selectedDate.getDay();
-
-    let isValid = false;
-
-    if (dayOfWeek >= 1 && dayOfWeek <= 6) { // Monday to Saturday
-        if (selectedHour >= 7 && selectedHour <= 19) {
-            isValid = true;
-        }
-    }
-    else if (dayOfWeek === 0) { // Sunday
-        if (selectedHour >= 8 && selectedHour <= 12) {
-            isValid = true;
-        }
-    }
-
-    if (!isValid) {
-        alert(translations[currentLang].pickupTimeInvalid);
-        return false;
-    }
+    // Additional validation against opening hours is implicitly handled by populatePickupHours
     return true;
 }
 
-// Handles the submission of the order form
 function submitOrder(event) {
     event.preventDefault();
-
+    const orderForm = document.getElementById('orderForm');
     const formData = new FormData(orderForm);
-
+    const phone = formData.get('phone');
+    const pickupDate = formData.get('pickupDate');
+    const pickupHour = formData.get('pickupTime');
+    
     if (cart.length === 0) {
         alert(translations[currentLang].addAtLeastOneProductAlert);
         return;
     }
-
-    let name = formData.get('name');
-    let email = formData.get('email');
-    let phone = formData.get('phone');
-    let pickupDate = formData.get('pickupDate');
-    let pickupHour = formData.get('pickupTime');
-
-    let message = formData.get('message');
-
     if (!phone) {
       alert(translations[currentLang].providePhoneNumberAlert);
       return;
     }
-
-    if (!pickupDate || !pickupHour) {
-        alert(translations[currentLang].pickupDateInvalid);
-        return;
-    }
-
     if (!validatePickupTime(pickupDate, pickupHour)) {
         return;
     }
 
     const summary = cart.map(item => `${item.quantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en}`).join('\n');
-
     const emailBody = `
 ${translations[currentLang].newOrderEmailBodyTitle}
-${translations[currentLang].nameEmailBody} ${name}
-${translations[currentLang].emailEmailBody} ${email ? email : translations[currentLang].notProvided}
+${translations[currentLang].nameEmailBody} ${formData.get('name')}
+${translations[currentLang].emailEmailBody} ${formData.get('email') || translations[currentLang].notProvided}
 ${translations[currentLang].phoneEmailBody} ${phone}
 ${translations[currentLang].pickupDateLabel} ${pickupDate}
-${translations[currentLang].pickupTimeLabel} ${pickupHour}:00 Uhr
+${translations[currentLang].pickupTimeLabel} ${pickupHour}:00
 ${translations[currentLang].productsEmailBody}
 ${summary}
-${translations[currentLang].messageEmailBody} ${message ? message : translations[currentLang].notProvided}
+${translations[currentLang].messageEmailBody} ${formData.get('message') || translations[currentLang].notProvided}
     `.trim();
 
-    const recipientEmail = 'order@yourbakery.com'; // IMPORTANT: Change to your actual bakery email
-
+    // IMPORTANT: This uses a mailto link, which requires the user to have a configured email client.
+    // Replace 'order@your-bakery.com' with your actual business email address.
+    const recipientEmail = 'order@your-bakery.com'; 
     const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(translations[currentLang].newOrderEmailSubject)}&body=${encodeURIComponent(emailBody)}`;
     window.location.href = mailtoLink;
 
@@ -1174,15 +975,10 @@ ${translations[currentLang].messageEmailBody} ${message ? message : translations
     orderForm.reset();
 }
 
-// Initial setup when the script loads
 document.addEventListener('DOMContentLoaded', () => {
     applyLanguage();
     updateCartCount();
-    // Removed explicit calls to setMinimumDateTime and populatePickupHours here,
-    // as they are handled when openOrderForm is called (e.g., when the user clicks the cart icon).
-    // This reduces redundant calls on page load.
 });
-
 </script>
 </body>
 </html>
