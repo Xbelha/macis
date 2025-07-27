@@ -222,6 +222,46 @@
             margin-top: auto;
         }
 
+        /* NEW: Pagination Styling */
+        #paginationContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin-top: -20px;
+            margin-bottom: 40px;
+        }
+        .page-btn {
+            background: #fff;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+            padding: 10px 18px;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 5px;
+            font-weight: bold;
+        }
+        .page-btn:hover {
+            background: var(--accent-color);
+            color: #fff;
+        }
+        .page-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+            cursor: default;
+        }
+        .page-btn:disabled {
+            background: #e0e0e0;
+            border-color: #e0e0e0;
+            color: #a0a0a0;
+            cursor: not-allowed;
+        }
+        
         /* Modals (Product Details & Order) */
         .modal {
             display: none;
@@ -286,7 +326,7 @@
             margin-top: 15px;
         }
         
-        /* NEW: Styles for the dietary badges */
+        /* Styles for the dietary badges */
         .dietary-badge {
             display: inline-block;
             padding: 6px 14px;
@@ -300,19 +340,18 @@
             margin: 5px 0;
         }
       .badge-vegan {
-  background: linear-gradient(45deg, #6cc24a, #4caf50); /* leafy green tones */
-  color: white;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  display: inline-block;
-}
-
-.badge-vegetarian {
-  background: linear-gradient(45deg, #c7d36f, #a4c639); /* fresh herb tones */
-  color: #fff;
-}
+            background: linear-gradient(45deg, #6cc24a, #4caf50); /* leafy green tones */
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .badge-vegetarian {
+            background: linear-gradient(45deg, #c7d36f, #a4c639); /* fresh herb tones */
+            color: #fff;
+        }
 
         .modal-add-to-cart {
             margin-top: 25px;
@@ -589,6 +628,7 @@
   </div>
 
   <section class="products" id="productGrid"></section>
+  <div id="paginationContainer"></div>
 
     <div class="modal" id="modal">
     <div class="modal-content card-style">
@@ -670,12 +710,33 @@ const products = [
   { id: 5, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3617-768x512.jpg', name_de:'Grand Gourmet', name_en:'Grand Gourmet', cal:350, allergen_de:'Gluten, Soja', allergen_en:'Gluten, Soy', category:'bread', price: 8.69, dietary: 'vegan' },
   { id: 6, img:'https://www.verygourmand.com/img/anblog/b/b-6273bd7170ea4-anblog_thumb.jpg', name_de:'Flan Kuchen', name_en:'Flan Cake', cal:330, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 4.50, dietary: 'vegetarian' },
   { id: 7, img:'https://pure-pastry.de/wp-content/uploads/2025/01/Pure_Pastry_Freisteller_DSC07676.jpg', name_de:'Buttercroissant', name_en:'Butter Croissant', cal:280, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 2.80, dietary: 'vegetarian' },
-  { id: 8, img:'https://www.arctis.de/wp-content/uploads/2023/07/032-Laugenbroetchen.jpg', name_de:'Laugenbrötchen', name_en:'Pretzel Roll', cal:220, allergen_de:'Gluten', allergen_en:'Gluten', category:'broetchen', price: 1.50, dietary: 'vegan' }
+  { id: 8, img:'https://www.arctis.de/wp-content/uploads/2023/07/032-Laugenbroetchen.jpg', name_de:'Laugenbrötchen', name_en:'Pretzel Roll', cal:220, allergen_de:'Gluten', allergen_en:'Gluten', category:'broetchen', price: 1.50, dietary: 'vegan' },
+  { id: 9, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3501-1024x683.jpg', name_de:'Walnussbrot', name_en:'Walnut Bread', cal:420, allergen_de:'Gluten, Nüsse', allergen_en:'Gluten, Nuts', category:'bread', price: 11.59, dietary: 'vegan' },
+  { id: 10, img:'https://www.vollkornbaeckerei-wuest.de/.cm4all/uproc.php/0/Kundendaten/Alte_Webseite/Bilder/Br%C3%B6tchen/Weizen/Spitzweck-1050.png?_=1718e1107c8', name_de:'Dinkelbrötchen', name_en:'Spelt Roll', cal:290, allergen_de:'Gluten, Milch', allergen_en:'Gluten, Dairy', category:'broetchen', price: 1.20, dietary: 'vegetarian' },
+  { id: 11, img:'https://3brothersbakery.com/wp-content/uploads/2018/05/ChocolateCroissant_02-scaled.jpg', name_de:'Schokocroissant', name_en:'Chocolate Croissant', cal:450, allergen_de:'Gluten, Milch, Soja', allergen_en:'Gluten, Dairy, Soy', category:'sweet', price: 3.20, dietary: 'vegetarian' },
+  { id: 12, img:'https://www.nachhaltigleben.ch/images/stories/Rezepte/Kartoffelbrot_645.jpg', name_de:'KartoffelBrot', name_en:'Potato Bread', cal:280, allergen_de:'Gluten', allergen_en:'Gluten', category:'bread', price: 7.99, badge: 'new', dietary: 'vegan' },
+  { id: 13, img:'https://www.specialitybreads.co.uk/wp-content/uploads/2013/03/Recipe_product_Individual-ciabatta-roll_FB682.png', name_de:'Ciabatta', name_en:'Ciabatta', cal:260, allergen_de:'Gluten', allergen_en:'Gluten', category:'bread', price: 4.50, dietary: 'vegan' },
+  { id: 14, img:'https://de.rc-cdn.community.thermomix.com/recipeimage/q3g2fubl-04855-946307-cfcd2-nrrujcv4/a044518b-fb63-4a89-80f1-ce4d09a815fe/main/marmorkuchen.jpg', name_de:'Marmor Kuchen', name_en:'Marmor Kuchen', cal:550, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 4.90, dietary: 'vegetarian' },
+  { id: 15, img:'https://www.baeckerei-horsthemke.de/wp-content/uploads/2022/07/kuerbiskern-broetchen-auf-einem-holztisch.jpg.webp', name_de:'Saatenbrötchen', name_en:'Pumpkin Seed Roll', cal:310, allergen_de:'Gluten', allergen_en:'Gluten', category:'broetchen', price: 1.60, dietary: 'vegan' },
+  { id: 16, img:'https://www.einfachbacken.de/sites/einfachbacken.de/files/2018-07/russischer_zupfkuchen-2-png-converted.jpg', name_de:'Zupf Kuchen', name_en:'Russian cheesecake', cal:480, allergen_de:'Gluten, Milch, Nüsse', allergen_en:'Gluten, Dairy, Nuts', category:'sweet', price: 4.75, dietary: 'vegetarian' },
+  { id: 17, img:'https://delightbaking.com/wp-content/uploads/2019/11/Sourdough-Loaf-With-Sesame-Seeds-440x440.webp', name_de:'Sesam Kruste', name_en:'Sesame Bread', cal:420, allergen_de:'Gluten, Nüsse', allergen_en:'Gluten, Nuts', category:'bread', price: 7.50, dietary: 'vegan' },
+  { id: 18, img:'https://img.offers-cdn.net/assets/uploads/offers/de/901439/roggenrose-thumbWebP.webp', name_de:'Roggenrose', name_en:'Roggenrose', cal:290, allergen_de:'Gluten, Milch', allergen_en:'Gluten, Dairy', category:'broetchen', price: 1.20, dietary: 'vegetarian' },
+  { id: 19, img:'https://babyrockmyday.com/wp-content/uploads/2017/10/Kadamom-Zimt-Knoten1-740x1110.jpg', name_de:'kardamom Knoten', name_en:'cardamom Roll', cal:450, allergen_de:'Gluten, Milch, Soja', allergen_en:'Gluten, Dairy, Soy', category:'sweet', price: 3.20, dietary: 'vegetarian' },
+  { id: 20, img:'https://www.fraenkische-rezepte.de/wp-content/uploads/2022/06/karottenbrot.jpg', name_de:'Karottenbrot', name_en:'Carrots Bread', cal:280, allergen_de:'Gluten', allergen_en:'Gluten', category:'bread', price: 6.20, badge: 'new', dietary: 'vegan' },
+  { id: 21, img:'https://w7.pngwing.com/pngs/672/1012/png-transparent-rye-bread-ciabatta-bakery-tart-pain-au-chocolat-bread-baked-goods-food-olive-thumbnail.png', name_de:'Ciabatta Olive', name_en:'Ciabatta Olive', cal:260, allergen_de:'Gluten', allergen_en:'Gluten', category:'bread', price: 4.50, dietary: 'vegan' },
+  { id: 22, img:'https://valentinascorner.com/wp-content/uploads/2022/02/Vanilla-Cupcakes.jpg', name_de:'Cup Cake', name_en:'Cup Cake ', cal:550, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 4.90, dietary: 'vegetarian' },
+  { id: 23, img:'https://www.brotkruemel.com/media/image/e9/de/b2/Weizenbroetchen-ueber-Nacht-1.jpg', name_de:'weizenbrötchen', name_en:'wheat Roll', cal:310, allergen_de:'Gluten', allergen_en:'Gluten', category:'broetchen', price: 1.60, dietary: 'vegan' },
+  { id: 24, img:'https://www.kuchentratsch.com/cdn/shop/files/Zitronenkuchen-gross-kuchentratsch-oben.webp?v=1741079391', name_de:'Zitronen Kuchen', name_en:'Lemon Cake', cal:480, allergen_de:'Gluten, Milch, Nüsse', allergen_en:'Gluten, Dairy, Nuts', category:'sweet', price: 4.75, dietary: 'vegetarian' }
 ];
 
 let currentLang = 'de';
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let currentProductInModal = null;
+
+// --- NEW: Pagination State ---
+let currentPage = 1;
+const productsPerPage = 12;
+let currentFilteredProducts = [...products];
 
 const modal = document.getElementById('modal');
 const orderModal = document.getElementById('orderModal');
@@ -683,74 +744,118 @@ const productGrid = document.getElementById('productGrid');
 const cartCountSpan = document.getElementById('cartCount');
 const pickupDateInput = document.getElementById('pickupDate');
 const pickupTimeSelect = document.getElementById('pickupTime');
+const paginationContainer = document.getElementById('paginationContainer');
 
 const translations = {
   de: {
-    langSwitch: 'Deutsch',
-    mainTitle: 'Macis Biobäckerei in Leipzig',
-    subTitle: 'Traditionelle Backkunst, jeden Tag frisch',
-    orderNowBtn: 'Jetzt bestellen',
-    allBakedGoods: 'Alle Backwaren', bread: 'Brot', rolls: 'Brötchen', sweets: 'Süßes', searchBtn: '🔍 Suche',
-    orderTitle: 'Deine Bestellung', submitBtn: 'Absenden', contactTitle: 'Kontakt & Öffnungszeiten',
-    addressLabel: 'Adresse:', phoneLabel: 'Telefon:', emailLabel: 'E-Mail:',
+    langSwitch: 'Deutsch', mainTitle: 'Macis Biobäckerei in Leipzig', subTitle: 'Traditionelle Backkunst, jeden Tag frisch',
+    orderNowBtn: 'Jetzt bestellen', allBakedGoods: 'Alle Backwaren', bread: 'Brot', rolls: 'Brötchen', sweets: 'Süßes', searchBtn: '🔍 Suche',
+    orderTitle: 'Deine Bestellung', submitBtn: 'Absenden', contactTitle: 'Kontakt & Öffnungszeiten', addressLabel: 'Adresse:', phoneLabel: 'Telefon:', emailLabel: 'E-Mail:',
     openingHoursTitle: 'Öffnungszeiten', openingHoursWeekday: 'Montag – Samstag: 7:00 – 19:00 Uhr', openingHoursSunday: 'Sonntag: 8:00 – 12:00 Uhr',
     selectProductQuantityAlert: 'Bitte gib eine gültige Menge ein.', noProductsAddedAlert: 'Dein Warenkorb ist leer.',
     addAtLeastOneProductAlert: 'Bitte füge mindestens ein Produkt zum Warenkorb hinzu.', providePhoneNumberAlert: 'Bitte gib deine Telefonnummer an, um die Bestellung abzuschicken.',
-    orderSuccessAlert: 'Vielen Dank für deine Bestellung! Wir haben sie erhalten.',
-    newOrderEmailSubject: 'Neue Bäckerei Bestellung', newOrderEmailBodyTitle: 'Neue Bestellung:',
+    orderSuccessAlert: 'Vielen Dank für deine Bestellung! Wir haben sie erhalten.', newOrderEmailSubject: 'Neue Bäckerei Bestellung', newOrderEmailBodyTitle: 'Neue Bestellung:',
     nameEmailBody: 'Name:', emailEmailBody: 'E-Mail:', phoneEmailBody: 'Telefon:', productsEmailBody: 'Produkte:', messageEmailBody: 'Nachricht:',
     pickupDateLabel: 'Abholdatum:', pickupTimeLabel: 'Abholzeit:',
-    pickupTimeInvalid: 'Bitte wähle eine Abholzeit innerhalb der Öffnungszeiten (Mo-Sa: 7-19 Uhr, So: 8-12 Uhr).',
-    pickupTimePast: 'Die gewählte Abholzeit liegt in der Vergangenheit.',
-    addToCartBtn: 'Zum Warenkorb', yourCart: 'Dein Warenkorb', searchPlaceholder: 'Gib ein, was du suchst...',
-    yourName: 'Dein Name', phoneNumber: 'Telefonnummer', emailOptional: 'E-Mail (optional)', messageOptional: 'Nachricht (optional)',
-    notProvided: 'Nicht angegeben', totalText: 'Gesamt:'
+    pickupTimeInvalid: 'Bitte wähle eine Abholzeit innerhalb der Öffnungszeiten (Mo-Sa: 7-19 Uhr, So: 8-12 Uhr).', pickupTimePast: 'Die gewählte Abholzeit liegt in der Vergangenheit.',
+    addToCartBtn: 'Zum Warenkorb', yourCart: 'Dein Warenkorb', searchPlaceholder: 'Gib ein, was du suchst...', yourName: 'Dein Name', phoneNumber: 'Telefonnummer',
+    emailOptional: 'E-Mail (optional)', messageOptional: 'Nachricht (optional)', notProvided: 'Nicht angegeben', totalText: 'Gesamt:',
+    prevPage: 'Zurück', nextPage: 'Weiter'
   },
   en: {
-    langSwitch: 'English',
-    mainTitle: 'Macis Organic Bakery in Leipzig',
-    subTitle: 'Traditional Baking, Fresh Every Day',
-    orderNowBtn: 'Order Now',
-    allBakedGoods: 'All Baked Goods', bread: 'Bread', rolls: 'Rolls', sweets: 'Sweets', searchBtn: '🔍 Search',
-    orderTitle: 'Your Order', submitBtn: 'Submit', contactTitle: 'Contact & Opening Hours',
-    addressLabel: 'Address:', phoneLabel: 'Phone:', emailLabel: 'Email:',
+    langSwitch: 'English', mainTitle: 'Macis Organic Bakery in Leipzig', subTitle: 'Traditional Baking, Fresh Every Day',
+    orderNowBtn: 'Order Now', allBakedGoods: 'All Baked Goods', bread: 'Bread', rolls: 'Rolls', sweets: 'Sweets', searchBtn: '🔍 Search',
+    orderTitle: 'Your Order', submitBtn: 'Submit', contactTitle: 'Contact & Opening Hours', addressLabel: 'Address:', phoneLabel: 'Phone:', emailLabel: 'Email:',
     openingHoursTitle: 'Opening Hours', openingHoursWeekday: 'Monday – Saturday: 7:00 AM – 7:00 PM', openingHoursSunday: 'Sunday: 8:00 AM – 12:00 PM',
     selectProductQuantityAlert: 'Please enter a valid quantity.', noProductsAddedAlert: 'Your cart is empty.',
     addAtLeastOneProductAlert: 'Please add at least one product to the cart.', providePhoneNumberAlert: 'Please provide your phone number to submit the order.',
-    orderSuccessAlert: 'Thank you for your order! We have received it.',
-    newOrderEmailSubject: 'New Bakery Order', newOrderEmailBodyTitle: 'New Order:',
+    orderSuccessAlert: 'Thank you for your order! We have received it.', newOrderEmailSubject: 'New Bakery Order', newOrderEmailBodyTitle: 'New Order:',
     nameEmailBody: 'Name:', emailEmailBody: 'Email:', phoneEmailBody: 'Phone:', productsEmailBody: 'Products:', messageEmailBody: 'Message:',
     pickupDateLabel: 'Pickup Date:', pickupTimeLabel: 'Pickup Time:',
-    pickupTimeInvalid: 'Please select a pickup time within opening hours (Mon-Sat: 7 AM - 7 PM, Sun: 8 AM - 12 PM).',
-    pickupTimePast: 'The selected pickup time is in the past.',
-    addToCartBtn: 'Add to Cart', yourCart: 'Your Cart', searchPlaceholder: 'Enter what you are looking for...',
-    yourName: 'Your Name', phoneNumber: 'Phone Number', emailOptional: 'E-Mail (optional)', messageOptional: 'Message (optional)',
-    notProvided: 'Not provided', totalText: 'Total:'
+    pickupTimeInvalid: 'Please select a pickup time within opening hours (Mon-Sat: 7 AM - 7 PM, Sun: 8 AM - 12 PM).', pickupTimePast: 'The selected pickup time is in the past.',
+    addToCartBtn: 'Add to Cart', yourCart: 'Your Cart', searchPlaceholder: 'Enter what you are looking for...', yourName: 'Your Name', phoneNumber: 'Phone Number',
+    emailOptional: 'E-Mail (optional)', messageOptional: 'Message (optional)', notProvided: 'Not provided', totalText: 'Total:',
+    prevPage: 'Previous', nextPage: 'Next'
   }
 };
 
-function renderProducts(itemsToRender) {
-  productGrid.innerHTML = itemsToRender.map(p => {
-    let badgeText = '';
-    let badgeClass = '';
-    if (p.badge === 'new') {
-      badgeClass = `product-badge new`;
-      badgeText = currentLang === 'de' ? 'Neu!' : 'New!';
-    }
-    return `
-      <div class="product card-style" onclick="openModal(${p.id})">
-        <div class="product-image-container">
-          <img src="${p.img}" alt="${currentLang === 'de' ? p.name_de : p.name_en}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/220x220?text=Image+Missing';">
-          ${p.badge ? `<div class="${badgeClass}">${badgeText}</div>` : ''}
-        </div>
-        <div class="product-info">
-          <h3>${currentLang === 'de' ? p.name_de : p.name_en}</h3>
-          <p class="product-price">${p.price.toFixed(2)} €</p>
-        </div>
-      </div>
-    `;
-  }).join('');
+// --- MODIFIED: Main display function to handle pagination ---
+function displayProducts() {
+    productGrid.innerHTML = "";
+    const startIndex = (currentPage - 1) * productsPerPage;
+    const paginatedProducts = currentFilteredProducts.slice(startIndex, startIndex + productsPerPage);
+
+    productGrid.innerHTML = paginatedProducts.map(p => {
+        let badgeText = '';
+        let badgeClass = '';
+        if (p.badge === 'new') {
+            badgeClass = `product-badge new`;
+            badgeText = currentLang === 'de' ? 'Neu!' : 'New!';
+        }
+        return `
+            <div class="product card-style" onclick="openModal(${p.id})">
+                <div class="product-image-container">
+                    <img src="${p.img}" alt="${currentLang === 'de' ? p.name_de : p.name_en}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/220x220?text=Image+Missing';">
+                    ${p.badge ? `<div class="${badgeClass}">${badgeText}</div>` : ''}
+                </div>
+                <div class="product-info">
+                    <h3>${currentLang === 'de' ? p.name_de : p.name_en}</h3>
+                    <p class="product-price">${p.price.toFixed(2)} €</p>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    renderPaginationControls();
 }
+
+// --- NEW: Function to render pagination controls ---
+function renderPaginationControls() {
+    paginationContainer.innerHTML = '';
+    const pageCount = Math.ceil(currentFilteredProducts.length / productsPerPage);
+
+    if (pageCount <= 1) return;
+
+    // Previous button
+    const prevButton = document.createElement('button');
+    prevButton.textContent = translations[currentLang].prevPage;
+    prevButton.classList.add('page-btn');
+    prevButton.disabled = currentPage === 1;
+    prevButton.onclick = () => changePage(currentPage - 1);
+    paginationContainer.appendChild(prevButton);
+
+    // Page number buttons
+    for (let i = 1; i <= pageCount; i++) {
+        const pageButton = document.createElement('button');
+        pageButton.textContent = i;
+        pageButton.classList.add('page-btn');
+        if (i === currentPage) {
+            pageButton.classList.add('active');
+        }
+        pageButton.onclick = () => changePage(i);
+        paginationContainer.appendChild(pageButton);
+    }
+
+    // Next button
+    const nextButton = document.createElement('button');
+    nextButton.textContent = translations[currentLang].nextPage;
+    nextButton.classList.add('page-btn');
+    nextButton.disabled = currentPage === pageCount;
+    nextButton.onclick = () => changePage(currentPage + 1);
+    paginationContainer.appendChild(nextButton);
+}
+
+// --- NEW: Function to change pages ---
+function changePage(page) {
+    if (page < 1 || page > Math.ceil(currentFilteredProducts.length / productsPerPage)) {
+        return;
+    }
+    currentPage = page;
+    displayProducts();
+    // Scroll to top of grid for better UX
+    productGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 
 function openModal(productId) {
   const p = products.find(prod => prod.id === productId);
@@ -798,9 +903,19 @@ function closeOrderForm() {
   orderModal.style.display = 'none';
 }
 
+// --- MODIFIED: Filter function to work with pagination ---
 function filterProducts(cat) {
-  const filtered = cat === 'all' ? products : products.filter(p => p.category === cat);
-  renderProducts(filtered);
+  currentFilteredProducts = cat === 'all' ? [...products] : products.filter(p => p.category === cat);
+  currentPage = 1; // Reset to first page
+  displayProducts();
+}
+
+// --- MODIFIED: Search function to work with pagination ---
+function searchProducts() {
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  currentFilteredProducts = products.filter(p => (currentLang === 'de' ? p.name_de : p.name_en).toLowerCase().includes(query));
+  currentPage = 1; // Reset to first page
+  displayProducts();
 }
 
 function toggleSearch() {
@@ -810,12 +925,6 @@ function toggleSearch() {
   if (isHidden) {
     document.getElementById('searchInput').focus();
   }
-}
-
-function searchProducts() {
-  const query = document.getElementById('searchInput').value.toLowerCase();
-  const filtered = products.filter(p => (currentLang === 'de' ? p.name_de : p.name_en).toLowerCase().includes(query));
-  renderProducts(filtered);
 }
 
 function applyLanguage() {
@@ -828,7 +937,7 @@ function applyLanguage() {
     const key = el.dataset.langPlaceholder;
     if (translations[currentLang][key]) el.placeholder = translations[currentLang][key];
   });
-  renderProducts(products);
+  displayProducts();
   renderCartItems();
 }
 
@@ -947,7 +1056,6 @@ function validatePickupTime(dateStr, hourStr) {
         alert(translations[currentLang].pickupTimePast);
         return false;
     }
-    // Additional validation against opening hours is implicitly handled by populatePickupHours
     return true;
 }
 
@@ -984,8 +1092,6 @@ ${summary}
 ${translations[currentLang].messageEmailBody} ${formData.get('message') || translations[currentLang].notProvided}
     `.trim();
 
-    // IMPORTANT: This uses a mailto link, which requires the user to have a configured email client.
-    // Replace 'order@your-bakery.com' with your actual business email address.
     const recipientEmail = 'order@your-bakery.com'; 
     const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(translations[currentLang].newOrderEmailSubject)}&body=${encodeURIComponent(emailBody)}`;
     window.location.href = mailtoLink;
