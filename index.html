@@ -724,6 +724,43 @@
             .product-info h3 { font-size: 1.2rem; }
             .product-price { font-size: 1.1rem; }
         }
+		/* Search bar wrapper to position the clear button */
+.search-bar-wrapper {
+  position: relative;
+  max-width: 500px;
+  margin: 20px auto;
+}
+
+/* Style for the input itself */
+.search-bar-wrapper input {
+  padding-right: 50px; /* space for the clear button */
+}
+
+/* Clear button inside input */
+#clearSearchBtn {
+  position: absolute;
+  right: 30px; /* closer inside the box */
+  top: 50%;
+  transform: translateY(-50%);
+  
+  width: 28px; 
+  height: 28px;
+  font-size: 20px;  /* ✅ bigger X */
+  line-height: 26px;
+  
+  background: #f0e6df; /* light background */
+  border: none;
+  border-radius: 50%; /* round button */
+  color: #6d4c41;
+  cursor: pointer;
+  display: none; /* hidden by default */
+  transition: background 0.2s ease;
+}
+
+#clearSearchBtn:hover {
+  background: #e0d8d3; /* subtle hover */
+}
+
     </style>
 </head>
 <body>
@@ -756,9 +793,12 @@
     </div>
   </div>
 
-  <div id="searchBarContainer">
-    <input type="text" id="searchInput" data-lang-placeholder="searchPlaceholder" onkeyup="searchProducts()" />
-  </div>
+<div id="searchBarContainer" class="search-bar-wrapper" style="display:none;">
+  <input type="text" id="searchInput" data-lang-placeholder="searchPlaceholder" onkeyup="searchProducts()" />
+  <button id="clearSearchBtn" onclick="clearSearch()">×</button>
+</div>
+
+
 
   <section class="products" id="productGrid"></section>
   <div id="paginationContainer"></div>
@@ -1040,10 +1080,24 @@ function filterProducts(cat, element) {
 
 function searchProducts() {
   const query = document.getElementById('searchInput').value.toLowerCase();
-  currentFilteredProducts = products.filter(p => (currentLang === 'de' ? p.name_de : p.name_en).toLowerCase().includes(query));
+  document.getElementById('clearSearchBtn').style.display = query ? 'block' : 'none'; // ✅ show clear button if text exists
+
+  currentFilteredProducts = products.filter(p => 
+    (currentLang === 'de' ? p.name_de : p.name_en).toLowerCase().includes(query)
+  );
   currentPage = 1;
   displayProducts();
 }
+
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  currentFilteredProducts = [...products];  // Reset to all products
+  currentPage = 1;
+  displayProducts();
+  document.getElementById('searchBarContainer').style.display = 'none'; // hide search bar
+}
+
 
 function toggleSearch() {
   const searchBarContainer = document.getElementById('searchBarContainer');
