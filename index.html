@@ -91,12 +91,12 @@
             background: #8d6e63;
         }
         
-        /* Filter Button Styling */
+        /* Filter Button Styling - Desktop */
         .filter-controls-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 30px 0 20px;
+            margin: 30px 20px 20px;
             flex-wrap: wrap;
         }
         .filter-controls {
@@ -180,7 +180,6 @@
             z-index: 100;
         }
         
-        /* MODIFIED: Enhanced cart button style for PC and added animations */
         .cart-icon {
             background: linear-gradient(145deg, #a1887f, #8d6e63);
             color: #fff;
@@ -194,6 +193,7 @@
             display: flex;
             align-items: center;
             gap: 12px;           /* Increased size on PC */
+            position: relative; /* MODIFIED: Added for positioning the badge */
         }
         .cart-icon:hover {
             transform: translateY(-3px) scale(1.05);
@@ -202,13 +202,33 @@
             animation-play-state: paused; /* Pause pulse on hover for smooth interaction */
         }
         .cart-icon i {
-            font-size: 1.3rem; /* Slightly larger icon */
+            font-size: 1.3rem;
         }
+        
+        /* FIXED: New styling for the cart count to be a notification badge */
         .cart-count-text {
+            position: absolute;
+            top: -5px;
+            right: 0px;
+            background-color: #d32f2f;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 0.8rem;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--main-bg);
+            transform: scale(0);
+            transform-origin: center;
+            transition: transform 0.2s ease-out;
+        }
+        .cart-count-text.visible {
+            transform: scale(1);
         }
 
-        /* NEW: Keyframe animations for the cart button */
         @keyframes pulse-animation {
             0%   { box-shadow: 0 5px 15px rgba(78, 52, 46, 0.3); }
             50%  { box-shadow: 0 8px 22px rgba(78, 52, 46, 0.45); }
@@ -221,7 +241,6 @@
             40%, 60% { transform: translate3d(3px, 0, 0); }
         }
 
-        /* NEW: Classes to trigger animations with JavaScript */
         .pulsing-cart {
             animation: pulse-animation 2.5s infinite ease-in-out;
         }
@@ -641,7 +660,32 @@
             
             .lang-switch { left: 15px; top: 15px; padding: 8px 15px; }
             
-            /* Revert cart button to original smaller size on mobile */
+            .filter-controls {
+                border: none;
+                box-shadow: none;
+                background: transparent;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                overflow: visible;
+            }
+            .filter-controls .filter-btn {
+                border-right: none;
+                border-radius: 20px;
+                background-color: #fff;
+                border: 1px solid #e0d8d3;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                margin: 0;
+            }
+            
+            .filter-controls .filter-btn:hover,
+            .filter-controls .filter-btn.active {
+                background: var(--accent-color);
+                color: #fff;
+                border-color: var(--accent-color);
+            }
+
             .cart-icon {
                 padding: 12px 22px;
                 font-size: 1rem;
@@ -665,12 +709,12 @@
             header h1 { font-size: 2.2rem; }
             header p { font-size: 1rem; }
             
-            /* Hide text on smallest screens to save space on floating button */
-            .cart-icon-text, .cart-count-text {
+            /* FIXED: Only hide the text, not the count badge */
+            .cart-icon-text {
                 display: none;
             }
             .cart-icon {
-                padding: 12px 14px; /* Make it more circular */
+                padding: 12px 14px;
                 gap: 0;
                 font-size: 1.2rem;
             }
@@ -1017,21 +1061,18 @@ function applyLanguage() {
     const translation = translations[currentLang][key];
     if (translation) {
         const icon = el.querySelector('i');
-        // Handle search button title
         if (key === 'searchBtn' && icon) {
             el.title = translation;
             const textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
             if (textNode) textNode.remove();
         } 
-        // Handle cart button text
         else if (key === 'yourCart') {
-            el.textContent = translation;
+            const textSpan = el.querySelector('.cart-icon-text');
+            if (textSpan) textSpan.textContent = translation;
         }
-        // Handle regular buttons with icons
         else if (icon) {
             el.innerHTML = icon.outerHTML + ' ' + translation;
         } 
-        // Handle text-only elements
         else {
             el.textContent = translation;
         }
@@ -1043,7 +1084,7 @@ function applyLanguage() {
   });
   displayProducts();
   renderCartItems();
-  updateCartCount(); // Ensure cart text is also translated
+  updateCartCount();
 }
 
 
@@ -1052,17 +1093,18 @@ function toggleLang() {
   applyLanguage();
 }
 
+// MODIFIED: updateCartCount now uses a class to show/hide the badge
 function updateCartCount() {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const cartCountSpan = document.getElementById('cartCount');
-  
+
   if (totalItems > 0) {
-      cartCountSpan.textContent = `(${totalItems})`;
+      cartCountSpan.textContent = totalItems;
+      cartCountSpan.classList.add('visible');
   } else {
-      cartCountSpan.textContent = '';
+      cartCountSpan.classList.remove('visible');
   }
 
-  // NEW: Get the cart button and toggle the pulse animation based on cart content
   const cartButton = document.getElementById('cartButton');
   if (cartButton) {
     cartButton.classList.toggle('pulsing-cart', totalItems > 0);
@@ -1086,11 +1128,9 @@ function addToCartFromModal() {
     cart.push({ product: currentProductInModal, quantity: quantity });
   }
   
-  // NEW: Trigger the shake animation for feedback
   const cartButton = document.getElementById('cartButton');
   if(cartButton) {
       cartButton.classList.add('shake');
-      // Remove the class after the animation is done to allow it to be re-triggered
       setTimeout(() => {
           cartButton.classList.remove('shake');
       }, 800);
