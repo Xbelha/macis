@@ -1048,6 +1048,12 @@ function searchProducts() {
 function toggleSearch() {
   const searchBarContainer = document.getElementById('searchBarContainer');
   const isHidden = searchBarContainer.style.display === 'none' || searchBarContainer.style.display === '';
+  
+  // ✅ Hide all active filter buttons when opening search
+  if (isHidden) {
+    document.querySelectorAll('.filter-category-btn').forEach(btn => btn.classList.remove('active'));
+  }
+
   searchBarContainer.style.display = isHidden ? 'block' : 'none';
   if (isHidden) {
     document.getElementById('searchInput').focus();
