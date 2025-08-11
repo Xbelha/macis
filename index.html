@@ -603,6 +603,20 @@
             margin-top: 25px;
             font-size: 1.1rem;
         }
+        #orderForm button[type="submit"]:disabled {
+            background: var(--disabled-bg);
+            border-color: var(--disabled-bg);
+            color: var(--disabled-color);
+            cursor: not-allowed;
+        }
+        #date-validation-message {
+            color: #d32f2f;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-top: -5px;
+            margin-bottom: 10px;
+            min-height: 1.2em;
+        }
 
         /* Cart Display in Order Form */
         #cartItemsContainer {
@@ -833,6 +847,7 @@
         <button class="filter-btn filter-category-btn" onclick="filterProducts('bread', this)" data-lang-key="bread"><i class="fas fa-bread-slice"></i> Brot</button>
         <button class="filter-btn filter-category-btn" onclick="filterProducts('broetchen', this)" data-lang-key="rolls"><i class="fas fa-cookie"></i> Brötchen</button>
         <button class="filter-btn filter-category-btn" onclick="filterProducts('sweet', this)" data-lang-key="sweets"><i class="fas fa-birthday-cake"></i> Süßes</button>
+        <button class="filter-btn filter-category-btn" onclick="filterProducts('sunday', this)" data-lang-key="sundaySpecials"><i class="fas fa-calendar-day"></i> Sonntags</button>
         <button class="filter-btn" onclick="toggleSearch()" data-lang-key="searchBtn" title="Suche"><i class="fas fa-search"></i></button>
     </div>
   </div>
@@ -876,7 +891,8 @@
         <input type="email" id="emailInput" name="email" data-lang-placeholder="emailOptional">
 
         <label for="pickupDate" data-lang-key="pickupDateLabel">Abholdatum:</label>
-        <input type="date" id="pickupDate" name="pickupDate" required onchange="populatePickupHours()">
+        <input type="date" id="pickupDate" name="pickupDate" required onchange="handleDateChange()">
+        <div id="date-validation-message"></div>
 
         <label for="pickupTime" data-lang-key="pickupTimeLabel">Abholzeit:</label>
         <select id="pickupTime" name="pickupTime" required></select>
@@ -888,7 +904,7 @@
         
         <label for="message" data-lang-key="messageOptional">Nachricht (optional)</label>
         <textarea id="message" name="message" data-lang-placeholder="messageOptional"></textarea>
-        <button type="submit" class="order-link" data-lang-key="submitBtn">Absenden</button>
+        <button type="submit" class="order-link" data-lang-key="submitBtn" id="submitOrderBtn">Absenden</button>
       </form>
     </div>
   </div>
@@ -918,41 +934,16 @@
   Macis Bio Bäckerei © 2025 – Mit Liebe gebacken
 </footer>
 <script>
-const products = [
-  { id: 1, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3474-768x512.jpg', name_de:'Landbrot', name_en:'Landbread', cal:350, allergen_de:'Gluten, Soja', allergen_en:'Gluten, Soy', category:'bread', price: 6.99, badge: 'new', dietary: 'vegan' },
-  { id: 2, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3410-768x512.jpg', name_de:'Macis Kruste', name_en:'Macis Crust', cal:310, allergen_de:'Gluten, Milch', allergen_en:'Gluten, Dairy', category:'bread', price: 6.69, dietary: 'vegetarian' },
-  { id: 3, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3655-768x512.jpg', name_de:'Das Kernige', name_en:'The Seedy One', cal:360, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'bread', price: 5.99, dietary: 'vegetarian' },
-  { id: 4, img:'https://m.media-amazon.com/images/I/61-7rqHsRqL._UF894,1000_QL80_.jpg', name_de:'RVK Brötchen', name_en:'RVK Roll', cal:250, allergen_de:'Gluten, Sesam', allergen_en:'Gluten, Sesame', category:'broetchen', price: 0.99, dietary: 'vegan' },
-  { id: 5, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3617-768x512.jpg', name_de:'Grand Gourmet', name_en:'Grand Gourmet', cal:350, allergen_de:'Gluten, Soja', allergen_en:'Gluten, Soy', category:'bread', price: 8.69, dietary: 'vegan' },
-  { id: 6, img:'https://www.verygourmand.com/img/anblog/b/b-6273bd7170ea4-anblog_thumb.jpg', name_de:'Flan Kuchen', name_en:'Flan Cake', cal:330, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 4.50, dietary: 'vegetarian' },
-  { id: 7, img:'https://pure-pastry.de/wp-content/uploads/2025/01/Pure_Pastry_Freisteller_DSC07676.jpg', name_de:'Buttercroissant', name_en:'Butter Croissant', cal:280, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 2.80, dietary: 'vegetarian' },
-  { id: 8, img:'https://www.arctis.de/wp-content/uploads/2023/07/032-Laugenbroetchen.jpg', name_de:'Laugenbrötchen', name_en:'Pretzel Roll', cal:220, allergen_de:'Gluten', allergen_en:'Gluten', category:'broetchen', price: 1.50, dietary: 'vegan' },
-  { id: 9, img:'https://macis-leipzig.de/wp-content/uploads/2021/07/IMG_3501-1024x683.jpg', name_de:'Walnussbrot', name_en:'Walnut Bread', cal:420, allergen_de:'Gluten, Nüsse', allergen_en:'Gluten, Nuts', category:'bread', price: 11.59, dietary: 'vegan' },
-  { id: 10, img:'https://www.vollkornbaeckerei-wuest.de/.cm4all/uproc.php/0/Kundendaten/Alte_Webseite/Bilder/Br%C3%B6tchen/Weizen/Spitzweck-1050.png?_=1718e1107c8', name_de:'Dinkelbrötchen', name_en:'Spelt Roll', cal:290, allergen_de:'Gluten, Milch', allergen_en:'Gluten, Dairy', category:'broetchen', price: 1.20, dietary: 'vegetarian' },
-  { id: 11, img:'https://3brothersbakery.com/wp-content/uploads/2018/05/ChocolateCroissant_02-scaled.jpg', name_de:'Schokocroissant', name_en:'Chocolate Croissant', cal:450, allergen_de:'Gluten, Milch, Soja', allergen_en:'Gluten, Dairy, Soy', category:'sweet', price: 3.20, dietary: 'vegetarian' },
-  { id: 12, img:'https://www.nachhaltigleben.ch/images/stories/Rezepte/Kartoffelbrot_645.jpg', name_de:'KartoffelBrot', name_en:'Potato Bread', cal:280, allergen_de:'Gluten', allergen_en:'Gluten', category:'bread', price: 7.99, badge: 'new', dietary: 'vegan' },
-  { id: 13, img:'https://www.specialitybreads.co.uk/wp-content/uploads/2013/03/Recipe_product_Individual-ciabatta-roll_FB682.png', name_de:'Ciabatta', name_en:'Ciabatta', cal:260, allergen_de:'Gluten', allergen_en:'Gluten', category:'bread', price: 4.50, dietary: 'vegan' },
-  { id: 14, img:'https://de.rc-cdn.community.thermomix.com/recipeimage/q3g2fubl-04855-946307-cfcd2-nrrujcv4/a044518b-fb63-4a89-80f1-ce4d09a815fe/main/marmorkuchen.jpg', name_de:'Marmor Kuchen', name_en:'Marmor Kuchen', cal:550, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 4.90, dietary: 'vegetarian' },
-  { id: 15, img:'https://www.baeckerei-horsthemke.de/wp-content/uploads/2022/07/kuerbiskern-broetchen-auf-einem-holztisch.jpg.webp', name_de:'Saatenbrötchen', name_en:'Pumpkin Seed Roll', cal:310, allergen_de:'Gluten', allergen_en:'Gluten', category:'broetchen', price: 1.09, dietary: 'vegan' },
-  { id: 16, img:'https://www.einfachbacken.de/sites/einfachbacken.de/files/2018-07/russischer_zupfkuchen-2-png-converted.jpg', name_de:'Zupf Kuchen', name_en:'Russian cheesecake', cal:480, allergen_de:'Gluten, Milch, Nüsse', allergen_en:'Gluten, Dairy, Nuts', category:'sweet', price: 4.50, dietary: 'vegetarian' },
-  { id: 17, img:'https://delightbaking.com/wp-content/uploads/2019/11/Sourdough-Loaf-With-Sesame-Seeds-440x440.webp', name_de:'Sesam Kruste', name_en:'Sesame Bread', cal:420, allergen_de:'Gluten, Nüsse', allergen_en:'Gluten, Nuts', category:'bread', price: 7.29, dietary: 'vegan' },
-  { id: 18, img:'https://img.offers-cdn.net/assets/uploads/offers/de/901439/roggenrose-thumbWebP.webp', name_de:'Roggenrose', name_en:'Roggenrose', cal:290, allergen_de:'Gluten, Milch', allergen_en:'Gluten, Dairy', category:'broetchen', price: 0.89, dietary: 'vegetarian' },
-  { id: 19, img:'https://babyrockmyday.com/wp-content/uploads/2017/10/Kadamom-Zimt-Knoten1-740x1110.jpg', name_de:'kardamom Knoten', name_en:'cardamom Roll', cal:450, allergen_de:'Gluten, Milch, Soja', allergen_en:'Gluten, Dairy, Soy', category:'sweet', price: 3.80, dietary: 'vegetarian' },
-  { id: 20, img:'https://www.fraenkische-rezepte.de/wp-content/uploads/2022/06/karottenbrot.jpg', name_de:'Karottenbrot', name_en:'Carrots Bread', cal:280, allergen_de:'Gluten', allergen_en:'Gluten', category:'bread', price: 3.80, badge: 'new', dietary: 'vegan' },
-  { id: 21, img:'https://w7.pngwing.com/pngs/672/1012/png-transparent-rye-bread-ciabatta-bakery-tart-pain-au-chocolat-bread-baked-goods-food-olive-thumbnail.png', name_de:'Ciabatta Olive', name_en:'Ciabatta Olive', cal:260, allergen_de:'Gluten', allergen_en:'Gluten', category:'bread', price: 5.59, dietary: 'vegan' },
-  { id: 22, img:'https://valentinascorner.com/wp-content/uploads/2022/02/Vanilla-Cupcakes.jpg', name_de:'Cup Cake', name_en:'Cup Cake ', cal:550, allergen_de:'Gluten, Milch, Eier', allergen_en:'Gluten, Dairy, Eggs', category:'sweet', price: 4.70, dietary: 'vegetarian' },
-  { id: 23, img:'https://www.brotkruemel.com/media/image/e9/de/b2/Weizenbroetchen-ueber-Nacht-1.jpg', name_de:'weizenbrötchen', name_en:'wheat Roll', cal:310, allergen_de:'Gluten', allergen_en:'Gluten', category:'broetchen', price: 0.99, dietary: 'vegan' },
-  { id: 24, img:'https://www.kuchentratsch.com/cdn/shop/files/Zitronenkuchen-gross-kuchentratsch-oben.webp?v=1741079391', name_de:'Zitronen Kuchen', name_en:'Lemon Cake', cal:480, allergen_de:'Gluten, Milch, Nüsse', allergen_en:'Gluten, Dairy, Nuts', category:'sweet', price: 4.70, dietary: 'vegetarian' }
-];
-
+// Global state variables
+let products = []; // Holds all products fetched from JSON
 let currentLang = 'de';
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let currentProductInModal = null;
-
 let currentPage = 1;
 const productsPerPage = 12;
-let currentFilteredProducts = [...products];
+let currentFilteredProducts = [];
 
+// DOM element references
 const modal = document.getElementById('modal');
 const orderModal = document.getElementById('orderModal');
 const productGrid = document.getElementById('productGrid');
@@ -961,10 +952,12 @@ const pickupDateInput = document.getElementById('pickupDate');
 const pickupTimeSelect = document.getElementById('pickupTime');
 const paginationContainer = document.getElementById('paginationContainer');
 
+// Language translations
 const translations = {
   de: {
     langSwitch: 'Deutsch', mainTitle: 'Macis Biobäckerei in Leipzig', subTitle: 'Traditionelle Backkunst, jeden Tag frisch',
     orderNowBtn: 'Jetzt bestellen', allBakedGoods: 'Alle Backwaren', bread: 'Brot', rolls: 'Brötchen', sweets: 'Süßes', searchBtn: 'Suche',
+    sundaySpecials: 'Sonntags',
     orderTitle: 'Deine Bestellung', submitBtn: 'Absenden', contactTitle: 'Kontakt & Öffnungszeiten', addressLabel: 'Adresse:', phoneLabel: 'Telefon:', emailLabel: 'E-Mail:',
     openingHoursTitle: 'Öffnungszeiten', openingHoursWeekday: 'Montag – Samstag: 7:00 – 19:00 Uhr', openingHoursSunday: 'Sonntag: 8:00 – 12:00 Uhr',
     selectProductQuantityAlert: 'Bitte gib eine gültige Menge ein.', noProductsAddedAlert: 'Dein Warenkorb ist leer.',
@@ -975,11 +968,13 @@ const translations = {
     pickupTimeInvalid: 'Bitte wähle eine Abholzeit innerhalb der Öffnungszeiten (Mo-Sa: 7-19 Uhr, So: 8-12 Uhr).', pickupTimePast: 'Die gewählte Abholzeit liegt in der Vergangenheit.',
     addToCartBtn: 'Zum Warenkorb', yourCart: 'Dein Warenkorb', searchPlaceholder: 'Gib ein, was du suchst...', yourName: 'Dein Name', phoneNumber: 'Telefonnummer',
     emailOptional: 'E-Mail (optional)', messageOptional: 'Nachricht (optional)', notProvided: 'Nicht angegeben', totalText: 'Gesamt:',
-    prevPage: 'Zurück', nextPage: 'Weiter'
+    prevPage: 'Zurück', nextPage: 'Weiter',
+    sundayProductOnNonSundayAlert: 'Ihre Bestellung enthält Artikel, die nur Sonntags erhältlich sind. Bitte wählen Sie einen Sonntag als Abholdatum.'
   },
   en: {
     langSwitch: 'English', mainTitle: 'Macis Organic Bakery in Leipzig', subTitle: 'Traditional Baking, Fresh Every Day',
     orderNowBtn: 'Order Now', allBakedGoods: 'All Baked Goods', bread: 'Bread', rolls: 'Rolls', sweets: 'Sweets', searchBtn: 'Search',
+    sundaySpecials: 'Sundays',
     orderTitle: 'Your Order', submitBtn: 'Submit', contactTitle: 'Contact & Opening Hours', addressLabel: 'Address:', phoneLabel: 'Phone:', emailLabel: 'Email:',
     openingHoursTitle: 'Opening Hours', openingHoursWeekday: 'Monday – Saturday: 7:00 AM – 7:00 PM', openingHoursSunday: 'Sunday: 8:00 AM – 12:00 PM',
     selectProductQuantityAlert: 'Please enter a valid quantity.', noProductsAddedAlert: 'Your cart is empty.',
@@ -990,7 +985,8 @@ const translations = {
     pickupTimeInvalid: 'Please select a pickup time within opening hours (Mon-Sat: 7 AM - 7 PM, Sun: 8 AM - 12 PM).', pickupTimePast: 'The selected pickup time is in the past.',
     addToCartBtn: 'Add to Cart', yourCart: 'Your Cart', searchPlaceholder: 'Enter what you are looking for...', yourName: 'Your Name', phoneNumber: 'Phone Number',
     emailOptional: 'E-Mail (optional)', messageOptional: 'Message (optional)', notProvided: 'Not provided', totalText: 'Total:',
-    prevPage: 'Previous', nextPage: 'Next'
+    prevPage: 'Previous', nextPage: 'Next',
+    sundayProductOnNonSundayAlert: 'Your order contains Sunday-only items. Please select a Sunday as your pickup date.'
   }
 };
 
@@ -1001,10 +997,12 @@ function displayProducts() {
 
     productGrid.innerHTML = paginatedProducts.map((p, index) => {
         let badgeText = '';
-        let badgeClass = '';
+        let badgeClass = 'product-badge';
         if (p.badge === 'new') {
-            badgeClass = `product-badge new`;
+            badgeClass += ' new';
             badgeText = currentLang === 'de' ? 'Neu!' : 'New!';
+        } else if (p.availability === 'sunday') {
+            badgeText = currentLang === 'de' ? 'Nur Sonntags' : 'Sunday Only';
         }
 
         const cartItem = cart.find(item => item.product.id === p.id);
@@ -1022,7 +1020,7 @@ function displayProducts() {
             <div class="product card-style" data-product-id="${p.id}" style="animation-delay: ${index * 60}ms">
                 <div class="product-image-container">
                     <img src="${p.img}" alt="${currentLang === 'de' ? p.name_de : p.name_en}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/220x220?text=Image+Missing';">
-                    ${p.badge ? `<div class="${badgeClass}">${badgeText}</div>` : ''}
+                    ${badgeText ? `<div class="${badgeClass}">${badgeText}</div>` : ''}
                 </div>
                 <div class="product-info">
                     <h3>${currentLang === 'de' ? p.name_de : p.name_en}</h3>
@@ -1118,6 +1116,7 @@ function openOrderForm() {
   renderCartItems();
   setMinimumDateTime();
   populatePickupHours();
+  validateCartAgainstPickupDate(); // Initial validation check
 }
 
 function closeOrderForm() {
@@ -1126,23 +1125,42 @@ function closeOrderForm() {
 
 function filterProducts(cat, element) {
   document.querySelectorAll('.filter-category-btn').forEach(btn => btn.classList.remove('active'));
-  if(element) element.classList.add('active');
+  if (element) element.classList.add('active');
   
-  currentFilteredProducts = cat === 'all' ? [...products] : products.filter(p => p.category === cat);
+  const today = new Date().getDay(); // 0 is Sunday
+  
+  if (cat === 'all') {
+      currentFilteredProducts = (today !== 0) 
+          ? products.filter(p => p.availability !== 'sunday')
+          : [...products];
+  } else if (cat === 'sunday') {
+      currentFilteredProducts = products.filter(p => p.availability === 'sunday');
+  } else {
+      let categoryProducts = products.filter(p => p.category === cat);
+      currentFilteredProducts = (today !== 0)
+          ? categoryProducts.filter(p => p.availability !== 'sunday')
+          : categoryProducts;
+  }
+  
   currentPage = 1; 
   displayProducts();
 }
 
 
 function searchProducts() {
-  const query = document.getElementById('searchInput').value.toLowerCase();
-  document.getElementById('clearSearchBtn').style.display = query ? 'block' : 'none';
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    document.getElementById('clearSearchBtn').style.display = query ? 'block' : 'none';
 
-  currentFilteredProducts = products.filter(p => 
-    (currentLang === 'de' ? p.name_de : p.name_en).toLowerCase().includes(query)
-  );
-  currentPage = 1;
-  displayProducts();
+    const today = new Date().getDay(); // 0 = Sunday
+    let searchableProducts = (today !== 0)
+        ? products.filter(p => p.availability !== 'sunday')
+        : [...products];
+
+    currentFilteredProducts = searchableProducts.filter(p =>
+        (currentLang === 'de' ? p.name_de : p.name_en).toLowerCase().includes(query)
+    );
+    currentPage = 1;
+    displayProducts();
 }
 
 
@@ -1203,6 +1221,10 @@ function applyLanguage() {
     const key = el.dataset.langPlaceholder;
     if (translations[currentLang][key]) el.placeholder = translations[currentLang][key];
   });
+  
+  if (orderModal.style.display === 'flex') {
+    validateCartAgainstPickupDate();
+  }
   
   renderCartItems();
   updateCartCount();
@@ -1317,25 +1339,24 @@ function renderCartItems() {
   if (cart.length === 0) {
     selectedProductsList.innerHTML = `<p style="text-align:center;">${translations[currentLang].noProductsAddedAlert}</p>`;
     totalContainer.style.display = 'none';
-    return;
+  } else {
+    totalContainer.style.display = 'flex';
+    cart.forEach((item, index) => {
+      const itemPrice = (item.product.price * item.quantity);
+      totalPrice += itemPrice;
+      selectedProductsList.innerHTML += `
+        <div class="cart-item-row">
+          <span>${currentLang === 'de' ? item.product.name_de : item.product.name_en} × ${item.quantity} (${itemPrice.toFixed(2)} €)</span>
+          <button type="button" aria-label="Remove item" onclick="removeFromCart(${index})">✖</button>
+        </div>
+      `;
+    });
+    totalContainer.innerHTML = `
+        <span>${translations[currentLang].totalText}</span>
+        <span>${totalPrice.toFixed(2)} €</span>`;
   }
-
-  totalContainer.style.display = 'flex';
-
-  cart.forEach((item, index) => {
-    const itemPrice = (item.product.price * item.quantity);
-    totalPrice += itemPrice;
-    selectedProductsList.innerHTML += `
-      <div class="cart-item-row">
-        <span>${currentLang === 'de' ? item.product.name_de : item.product.name_en} × ${item.quantity} (${itemPrice.toFixed(2)} €)</span>
-        <button type="button" aria-label="Remove item" onclick="removeFromCart(${index})">✖</button>
-      </div>
-    `;
-  });
-
-  totalContainer.innerHTML = `
-      <span>${translations[currentLang].totalText}</span>
-      <span>${totalPrice.toFixed(2)} €</span>`;
+  
+  validateCartAgainstPickupDate();
 }
 
 function removeFromCart(index) {
@@ -1389,21 +1410,42 @@ function populatePickupHours() {
     }
 }
 
-function validatePickupTime(dateStr, hourStr) {
-    if (!hourStr) {
-        alert(translations[currentLang].pickupTimeInvalid);
-        return false;
-    }
-    const selectedDateTime = new Date(`${dateStr}T${hourStr}:00:00`);
-    if (selectedDateTime < new Date()) {
-        alert(translations[currentLang].pickupTimePast);
-        return false;
+function validateCartAgainstPickupDate() {
+    const messageContainer = document.getElementById('date-validation-message');
+    const submitBtn = document.getElementById('submitOrderBtn');
+    const pickupDateStr = pickupDateInput.value;
+    
+    messageContainer.textContent = '';
+    submitBtn.disabled = false;
+
+    if (!pickupDateStr) return;
+
+    const hasSundayItem = cart.some(item => item.product.availability === 'sunday');
+    if (hasSundayItem) {
+        const selectedDate = new Date(pickupDateStr + 'T00:00:00');
+        const isSunday = selectedDate.getDay() === 0;
+        
+        if (!isSunday) {
+            messageContainer.textContent = translations[currentLang].sundayProductOnNonSundayAlert;
+            submitBtn.disabled = true;
+            return false;
+        }
     }
     return true;
 }
 
+function handleDateChange() {
+    populatePickupHours();
+    validateCartAgainstPickupDate();
+}
+
 function submitOrder(event) {
     event.preventDefault();
+    if (!validateCartAgainstPickupDate()) {
+        alert(translations[currentLang].sundayProductOnNonSundayAlert);
+        return;
+    }
+    
     const orderForm = document.getElementById('orderForm');
     const formData = new FormData(orderForm);
     const phone = formData.get('phone');
@@ -1412,7 +1454,12 @@ function submitOrder(event) {
     
     if (cart.length === 0) { alert(translations[currentLang].addAtLeastOneProductAlert); return; }
     if (!phone) { alert(translations[currentLang].providePhoneNumberAlert); return; }
-    if (!validatePickupTime(pickupDate, pickupHour)) return;
+    
+    const selectedDateTime = new Date(`${pickupDate}T${pickupHour}:00:00`);
+    if (selectedDateTime < new Date()) {
+        alert(translations[currentLang].pickupTimePast);
+        return;
+    }
 
     const summary = cart.map(item => `${item.quantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en}`).join('\n');
     const emailBody = `
@@ -1441,6 +1488,34 @@ ${translations[currentLang].messageEmailBody} ${formData.get('message') || trans
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Fetch products first, then initialize the application
+    fetch('Products.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            products = data; // 1. Populate the global 'products' array
+
+            // 2. Once data is loaded, set up the initial filters and display
+            const firstFilterButton = document.querySelector('.filter-category-btn');
+            if (firstFilterButton) {
+                filterProducts('all', firstFilterButton);
+            } else {
+                // Fallback if no filter buttons are found
+                currentFilteredProducts = [...products];
+                displayProducts();
+            }
+        })
+        .catch(error => {
+            console.error('Could not load products:', error);
+            // Display an error message to the user in the grid
+            productGrid.innerHTML = '<p style="text-align: center; color: red; font-size: 1.2rem;">Our products could not be loaded at this time. Please try again later.</p>';
+        });
+
+    // Set up event listeners that don't depend on the product data
     productGrid.addEventListener('click', (event) => {
         const target = event.target;
         
@@ -1462,12 +1537,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    const firstFilterButton = document.querySelector('.filter-category-btn');
-    if(firstFilterButton) {
-        firstFilterButton.classList.add('active');
-    }
-    
-    displayProducts();
+    // These can be called immediately as they update UI elements that are present on load
     applyLanguage();
     updateCartCount();
 });
