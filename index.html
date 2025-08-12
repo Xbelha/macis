@@ -880,7 +880,10 @@
     <div class="modal-content card-style">
       <button class="close-btn" onclick="closeOrderForm()">×</button>
       <h2 data-lang-key="orderTitle">Bestellung</h2>
-      <form id="orderForm" onsubmit="submitOrder(event)">
+     <form id="orderForm" action="https://api.web3forms.com/submit" method="POST">
+        
+        <input type="hidden" name="access_key" value="79544b58-7514-48c4-b80a-4d85b6e9eb87">
+        
         <label for="nameInput" data-lang-key="yourName">Dein Name</label>
         <input type="text" id="nameInput" name="name" data-lang-placeholder="yourName" required>
 
@@ -915,10 +918,7 @@
     <p><strong data-lang-key="phoneLabel">Telefon:</strong> <a href="tel:+4934122287523">+49 341 222 875 23</a></p>
     <p><strong data-lang-key="emailLabel">E-Mail:</strong> <a href="mailto:baeckerei@macis-leipzig.de">baeckerei@macis-leipzig.de</a></p>
     <div style="margin:30px auto; max-width:600px;">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2492.5644388839382!2d12.369769176886598!3d51.33753072309846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a6f9f310ab1c17%3A0xa5cd115fc8171f2c!2sMacis%20Leipzig%20-%20Biob%C3%A4ckerei!5e0!3m2!1sde!2sde!4v1754749048014!5m2!1sde!2sde"
-        width="100%" height="350" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-      </iframe>
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2507.039649175294!2d12.37370857697495!3d51.34123517177519!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a6f81c44855555%3A0x13483b860b3a3038!2sMacis%20Biob%C3%A4ckerei!5e0!3m2!1sen!2sde!4v1723417215949!5m2!1sen!2sde" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
     <h3 data-lang-key="openingHoursTitle">Öffnungszeiten</h3>
     <p data-lang-key="openingHoursWeekday">Montag – Samstag: 7:00 – 19:00 Uhr</p>
@@ -936,7 +936,7 @@
 <script>
 // Global state variables
 let products = []; // Holds all products fetched from JSON
-let currentLang = 'de';
+let currentLang = localStorage.getItem('bakeryLang') || 'de'; // UPDATED: Remembers language
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let currentProductInModal = null;
 let currentPage = 1;
@@ -1123,27 +1123,22 @@ function closeOrderForm() {
   orderModal.style.display = 'none';
 }
 
+// UPDATED: Improved filter logic
 function filterProducts(cat, element) {
-  document.querySelectorAll('.filter-category-btn').forEach(btn => btn.classList.remove('active'));
-  if (element) element.classList.add('active');
-  
-  const today = new Date().getDay(); // 0 is Sunday
-  
-  if (cat === 'all') {
-      currentFilteredProducts = (today !== 0) 
-          ? products.filter(p => p.availability !== 'sunday')
-          : [...products];
-  } else if (cat === 'sunday') {
-      currentFilteredProducts = products.filter(p => p.availability === 'sunday');
-  } else {
-      let categoryProducts = products.filter(p => p.category === cat);
-      currentFilteredProducts = (today !== 0)
-          ? categoryProducts.filter(p => p.availability !== 'sunday')
-          : categoryProducts;
-  }
-  
-  currentPage = 1; 
-  displayProducts();
+    document.querySelectorAll('.filter-category-btn').forEach(btn => btn.classList.remove('active'));
+    if (element) element.classList.add('active');
+
+    if (cat === 'all') {
+        currentFilteredProducts = [...products];
+    } else if (cat === 'sunday') {
+        currentFilteredProducts = products.filter(p => p.availability === 'sunday');
+    } else {
+        // Show all products in the category, regardless of day
+        currentFilteredProducts = products.filter(p => p.category === cat);
+    }
+
+    currentPage = 1;
+    displayProducts();
 }
 
 
@@ -1151,12 +1146,7 @@ function searchProducts() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     document.getElementById('clearSearchBtn').style.display = query ? 'block' : 'none';
 
-    const today = new Date().getDay(); // 0 = Sunday
-    let searchableProducts = (today !== 0)
-        ? products.filter(p => p.availability !== 'sunday')
-        : [...products];
-
-    currentFilteredProducts = searchableProducts.filter(p =>
+    currentFilteredProducts = products.filter(p =>
         (currentLang === 'de' ? p.name_de : p.name_en).toLowerCase().includes(query)
     );
     currentPage = 1;
@@ -1232,8 +1222,10 @@ function applyLanguage() {
 }
 
 
+// UPDATED: Remembers language choice
 function toggleLang() {
   currentLang = currentLang === 'de' ? 'en' : 'de';
+  localStorage.setItem('bakeryLang', currentLang); // Save the choice
   displayProducts();
 }
 
@@ -1438,57 +1430,89 @@ function handleDateChange() {
     populatePickupHours();
     validateCartAgainstPickupDate();
 }
-
 function submitOrder(event) {
     event.preventDefault();
+
     if (!validateCartAgainstPickupDate()) {
         alert(translations[currentLang].sundayProductOnNonSundayAlert);
         return;
     }
-    
-    const orderForm = document.getElementById('orderForm');
-    const formData = new FormData(orderForm);
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const submitBtn = document.getElementById('submitOrderBtn');
+
+    // 1. Gather all necessary information from the form
+    const name = formData.get('name');
     const phone = formData.get('phone');
+    const email = formData.get('email') || 'Nicht angegeben';
     const pickupDate = formData.get('pickupDate');
-    const pickupHour = formData.get('pickupTime');
-    
-    if (cart.length === 0) { alert(translations[currentLang].addAtLeastOneProductAlert); return; }
-    if (!phone) { alert(translations[currentLang].providePhoneNumberAlert); return; }
-    
-    const selectedDateTime = new Date(`${pickupDate}T${pickupHour}:00:00`);
-    if (selectedDateTime < new Date()) {
-        alert(translations[currentLang].pickupTimePast);
-        return;
-    }
+    const pickupTime = formData.get('pickupTime');
+    const userMessage = formData.get('message');
 
-    const summary = cart.map(item => `${item.quantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en}`).join('\n');
+    // 2. Create the cart summary
+    const cartSummary = cart.map(item =>
+        `${item.quantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en} (${(item.product.price * item.quantity).toFixed(2)} €)`
+    ).join('\n');
+    const total = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0).toFixed(2);
+
     const emailBody = `
-${translations[currentLang].newOrderEmailBodyTitle}
-${translations[currentLang].nameEmailBody} ${formData.get('name')}
-${translations[currentLang].emailEmailBody} ${formData.get('email') || translations[currentLang].notProvided}
-${translations[currentLang].phoneEmailBody} ${phone}
-${translations[currentLang].pickupDateLabel} ${pickupDate}
-${translations[currentLang].pickupTimeLabel} ${pickupHour}:00
-${translations[currentLang].productsEmailBody}
-${summary}
-${translations[currentLang].messageEmailBody} ${formData.get('message') || translations[currentLang].notProvided}
-    `.trim();
+Name : ${name}
+Telefon Nummer : ${phone}
+Email : ${email}
+abholzeit : ${pickupDate} um : ${pickupTime}:00 Uhr
 
-    const recipientEmail = 'order@your-bakery.com'; 
-    const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(translations[currentLang].newOrderEmailSubject)}&body=${encodeURIComponent(emailBody)}`;
-    window.location.href = mailtoLink;
+Bestelldetails:
+${cartSummary}
+Gesamt: ${total} €
+--------------------------------
+Message : ${userMessage}
+`;
 
-    alert(translations[currentLang].orderSuccessAlert);
+    // Create a clean data package to send
+    const dataToSend = new FormData();
+    dataToSend.append('access_key', formData.get('access_key'));
+    dataToSend.append('subject', `Bestellung von ${name}`);
+    dataToSend.append('from_name', name);
 
-    cart = [];
-    updateCartCount();
-    closeOrderForm();
-    orderForm.reset();
-    displayProducts();
+
+    dataToSend.append('', emailBody); 
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Wird gesendet...';
+
+    fetch(form.action, {
+        method: form.method,
+        body: dataToSend,
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) {
+            alert(translations[currentLang].orderSuccessAlert);
+            form.reset();
+            cart = [];
+            updateCartCount();
+            closeOrderForm();
+            displayProducts();
+        } else {
+            response.json().then(data => {
+                if (Object.hasOwn(data, 'errors')) {
+                    alert(data["errors"].map(error => error["message"]).join(", "));
+                } else {
+                    alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es per Telefon.');
+                }
+            })
+        }
+    }).catch(error => {
+        console.error('Error submitting order:', error);
+        alert('Die Bestellung konnte nicht gesendet werden. Bitte prüfen Sie Ihre Internetverbindung oder bestellen Sie per Telefon.');
+    }).finally(() => {
+        submitBtn.disabled = false;
+        applyLanguage();
+    });
 }
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Fetch products first, then initialize the application
     fetch('Products.json')
         .then(response => {
             if (!response.ok) {
@@ -1497,25 +1521,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(data => {
-            products = data; // 1. Populate the global 'products' array
-
-            // 2. Once data is loaded, set up the initial filters and display
+            products = data; 
             const firstFilterButton = document.querySelector('.filter-category-btn');
             if (firstFilterButton) {
                 filterProducts('all', firstFilterButton);
             } else {
-                // Fallback if no filter buttons are found
                 currentFilteredProducts = [...products];
                 displayProducts();
             }
         })
         .catch(error => {
             console.error('Could not load products:', error);
-            // Display an error message to the user in the grid
             productGrid.innerHTML = '<p style="text-align: center; color: red; font-size: 1.2rem;">Our products could not be loaded at this time. Please try again later.</p>';
         });
 
-    // Set up event listeners that don't depend on the product data
     productGrid.addEventListener('click', (event) => {
         const target = event.target;
         
@@ -1536,8 +1555,10 @@ document.addEventListener('DOMContentLoaded', () => {
             openModal(productId);
         }
     });
+
+    // Attach the submit event listener to the form
+    document.getElementById('orderForm').addEventListener('submit', submitOrder);
     
-    // These can be called immediately as they update UI elements that are present on load
     applyLanguage();
     updateCartCount();
 });
