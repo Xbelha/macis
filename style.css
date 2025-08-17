@@ -11,7 +11,7 @@
     --shadow: rgba(0, 0, 0, 0.07);
     --shadow-hover: rgba(0, 0, 0, 0.12);
     --card-bg: #ffffff;
-    --section-bg: #f7f7f7; /* Light grey for sections */
+    --section-bg: #f7f7ff; /* Light grey for sections */
     --footer-bg: #f7f7f7;
     --border-color: #e5e5e5;
     --input-bg: #fff;
@@ -197,7 +197,7 @@ header p {
     border-radius: 30px;
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    transition: background-color 0.3s ease;
+    transition: background-color: 0.3s ease;
 }
 .lang-switch:hover { background: rgba(255, 255, 255, 0.35); }
 
@@ -626,40 +626,7 @@ main { padding-top: 20px; }
     justify-content: center;
     width: 100%;
 }
-#slicingOptionsContainer {
-    width: 100%;
-    max-width: 300px;
-}
-.option-title {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: var(--text-color);
-    margin-bottom: 15px;
-    text-align: center;
-}
-.radio-group {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
-.radio-group input[type="radio"] {
-    display: none;
-}
-.radio-group label {
-    padding: 10px 20px;
-    border: 2px solid var(--border-color);
-    border-radius: 30px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    flex-grow: 1;
-    text-align: center;
-}
-.radio-group input[type="radio"]:checked + label {
-    background-color: var(--accent-color);
-    color: white !important;
-    border-color: var(--accent-color);
-}
+
 #modalProductQuantity {
     width: 80px;
     padding: 12px;
@@ -790,44 +757,53 @@ main { padding-top: 20px; }
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
+}
+
+.cart-item-options-container {
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
 }
 
-.cart-item-slicing-group {
+/* *** FINAL, OPTIMIZED STYLES FOR CART OPTION BUTTONS *** */
+.cart-item-option-group {
     display: flex;
-    gap: 8px;
-    flex-wrap: nowrap;
-    width: 100%;
-    max-width: 280px;
 }
-.cart-item-slicing-group input[type="radio"] {
-    display: none;
+
+.cart-item-option-group input[type="checkbox"] {
+    display: none; /* Hide the original checkbox */
 }
-.cart-item-slicing-group label {
-    padding: 0 14px;
-    height: 32px;
-    line-height: 32px;
-    text-align: center;
-    font-size: 0.85rem;
+
+.cart-item-option-group label {
+    padding: 5px 12px; /* Made smaller */
+    font-size: 0.85rem; /* Made smaller */
     font-weight: 500;
+    background-color: #f0f0f0; /* Light gray for OFF state */
     border: 1px solid var(--border-color);
-    color: var(--text-color);
+    color: var(--text-color-light);
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    /* THIS IS THE FIX: The flex-grow property that caused stretching has been removed */
+    user-select: none;
 }
-.cart-item-slicing-group input[type="radio"]:not(:checked) + label:hover {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-}
-.cart-item-slicing-group input[type="radio"]:checked + label {
-    border-color: var(--accent-color);
-    background-color: var(--accent-color);
-    color: #ffffff !important;
+
+.cart-item-option-group input[type="checkbox"]:checked + label {
+    background-color: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+    color: white !important; /* White text when selected */
     font-weight: 600;
-    box-shadow: 0 2px 8px rgba(88, 117, 58, 0.2);
 }
+
+.cart-item-option-group:hover label {
+    border-color: #aaa;
+}
+
+.cart-item-option-group input[type="checkbox"]:checked:hover + label {
+    background-color: var(--accent-color-hover) !important;
+    border-color: var(--accent-color-hover) !important;
+}
+/* END OF FINAL STYLES */
 
 .cart-item-row button {
     background: none;

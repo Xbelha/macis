@@ -514,17 +514,21 @@ function addToCartFromModal() {
   closeModal();
 }
 
-function updateSlicingPreference(itemIndex, newPreference) {
+// *** MODIFIED to handle checkboxes (isChecked is true or false) ***
+function updateSlicingPreference(itemIndex, isChecked) {
     if (cart[itemIndex]) {
-        cart[itemIndex].slicing = newPreference;
+        cart[itemIndex].slicing = isChecked ? 'sliced' : 'unsliced';
         localStorage.setItem('cart', JSON.stringify(cart));
         renderCartItems();
     }
 }
 
-function updateSizePreference(itemIndex, newSize) {
+// *** MODIFIED to handle checkboxes (isChecked is true or false) ***
+function updateSizePreference(itemIndex, isChecked) {
     if (cart[itemIndex]) {
         const oldItem = cart[itemIndex];
+        const newSize = isChecked ? 'half' : 'whole';
+        
         const existingItemWithNewSize = cart.find((item, index) => 
             item.product.id === oldItem.product.id && item.size === newSize && index !== itemIndex
         );
@@ -571,26 +575,21 @@ function renderCartItems() {
 
       let optionsHtml = '';
       
+      // *** REPLACED radio buttons with single checkboxes ***
       if (item.product.canBeHalved) {
-          const wholeText = translations[currentLang].sizeWhole;
           const halfText = translations[currentLang].sizeHalf;
           optionsHtml += `
-            <div class="cart-item-slicing-group">
-                <input type="radio" id="sizeWhole-${index}" name="size-${item.product.id}" value="whole" onchange="updateSizePreference(${index}, this.value)" ${item.size === 'whole' ? 'checked' : ''}>
-                <label for="sizeWhole-${index}">${wholeText}</label>
-                <input type="radio" id="sizeHalf-${index}" name="size-${item.product.id}" value="half" onchange="updateSizePreference(${index}, this.value)" ${item.size === 'half' ? 'checked' : ''}>
+            <div class="cart-item-option-group">
+                <input type="checkbox" id="sizeHalf-${index}" onchange="updateSizePreference(${index}, this.checked)" ${item.size === 'half' ? 'checked' : ''}>
                 <label for="sizeHalf-${index}">${halfText}</label>
             </div>`;
       }
       
       if (item.product.category === 'bread') {
-          const unslicedText = translations[currentLang].slicingUnsliced;
           const slicedText = translations[currentLang].slicingSliced;
           optionsHtml += `
-            <div class="cart-item-slicing-group">
-                <input type="radio" id="sliceNo-${index}" name="slicing-${index}" value="unsliced" onchange="updateSlicingPreference(${index}, this.value)" ${item.slicing === 'unsliced' ? 'checked' : ''}>
-                <label for="sliceNo-${index}">${unslicedText}</label>
-                <input type="radio" id="sliceYes-${index}" name="slicing-${index}" value="sliced" onchange="updateSlicingPreference(${index}, this.value)" ${item.slicing === 'sliced' ? 'checked' : ''}>
+            <div class="cart-item-option-group">
+                <input type="checkbox" id="sliceYes-${index}" onchange="updateSlicingPreference(${index}, this.checked)" ${item.slicing === 'sliced' ? 'checked' : ''}>
                 <label for="sliceYes-${index}">${slicedText}</label>
             </div>`;
       }
@@ -599,7 +598,9 @@ function renderCartItems() {
         <div class="cart-item-row">
           <div class="cart-item-details">
             <span>${currentLang === 'de' ? item.product.name_de : item.product.name_en} × ${item.quantity} (${itemPrice.toFixed(2)} €)</span>
-            ${optionsHtml}
+            <div class="cart-item-options-container">
+                ${optionsHtml}
+            </div>
           </div>
           <button type="button" aria-label="Remove item" onclick="removeFromCart(${index})">✖</button>
         </div>`;
@@ -704,12 +705,10 @@ function submitOrder(event) {
     
     const cartSummary = cart.map(item => {
         let optionText = '';
-        if (item.slicing) {
-            const key = item.slicing === 'sliced' ? 'slicingSliced' : 'slicingUnsliced';
-            optionText += ` (${translations[currentLang][key]})`;
+        if (item.slicing === 'sliced') {
+            optionText += ` (${translations[currentLang].slicingSliced})`;
         }
 
-        // *** THIS IS THE NEW LOGIC FOR THE EMAIL TEXT ***
         let displayQuantity = item.quantity;
         if (item.size === 'half') {
             displayQuantity = item.quantity * 0.5;
@@ -718,8 +717,7 @@ function submitOrder(event) {
         const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
         const itemPrice = pricePerItem * item.quantity;
         
-        return `${displayQuantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en}${optionText} (${itemPrice.toFixed(2)} €)`;
-    }).join('\n');
+return `${displayQuantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en}${optionText}`;    }).join('\n');
     
     const total = cart.reduce((sum, item) => {
         const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
