@@ -18,14 +18,14 @@
 <body>
 
 <header>
-  <!-- UPDATED HEADER CONTROLS -->
   <div class="header-controls">
       <button class="lang-switch" onclick="toggleLang()" data-lang-key="langSwitch">Deutsch</button>
-      <!-- INSTALL APP BUTTON -->
-      <button id="installAppBtn">
-          <i class="fas fa-download"></i>
-          <span data-lang-key="installApp">App installieren</span>
-      </button>
+      <div class="install-btn-container">
+        <button id="installAppBtn">
+            <i class="fas fa-download"></i>
+            <span data-lang-key="installApp">App installieren</span>
+        </button>
+      </div>
   </div>
   
   <img src="https://macis-leipzig.de/wp-content/uploads/2019/03/macis_Logo_Leipzig_Weiss-1-768x498_neu.png" alt="Macis Leipzig Logo">
@@ -33,8 +33,6 @@
   <p id="subtitle" data-lang-key="subTitle">Traditionelle Backkunst, jeden Tag frisch</p>
   <a href="#productGrid" class="order-btn" data-lang-key="orderNowBtn">Jetzt bestellen</a>
 </header>
-
-<!-- ... the rest of your HTML remains the same ... -->
 
 <div class="cart-icon-container">
     <button class="cart-icon" id="cartButton" onclick="openOrderForm()">
@@ -73,6 +71,8 @@
       <h3 id="modalTitle"></h3>
       <p id="modalDietary"></p>
       
+      <p id="modalPrice"></p>
+
       <div id="modalIngredients" class="modal-details-section">
           <h4 data-lang-key="ingredientsTitle">Zutaten</h4>
           <p id="modalIngredientsText"></p>
@@ -82,20 +82,7 @@
           <div id="modalNutritionTable"></div>
       </div>
 
-      <p id="modalPrice"></p>
-
       <div class="modal-add-to-cart">
-        <div id="slicingOptionsContainer" style="display: none;">
-          <p class="option-title" data-lang-key="slicingTitle">Schneide-Präferenz</p>
-          <div class="radio-group">
-              <input type="radio" id="sliceNo" name="slicing" value="unsliced" checked>
-              <label for="sliceNo" data-lang-key="slicingUnsliced">Am Stück</label>
-
-              <input type="radio" id="sliceYes" name="slicing" value="sliced">
-              <label for="sliceYes" data-lang-key="slicingSliced">Geschnitten</label>
-          </div>
-        </div>
-
         <div class="modal-action-row">
           <input type="number" id="modalProductQuantity" value="1" min="1">
           <button onclick="addToCartFromModal()" data-lang-key="addToCartBtn"></button>

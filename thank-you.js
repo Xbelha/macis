@@ -61,14 +61,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (lastOrder && orderDetailsContainer) {
         const { name, phone, pickupDate, pickupTime, cart } = lastOrder;
-        const total = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0).toFixed(2);
+        
+        // *** MODIFICATION START: Corrected logic for price and quantity ***
+        
+        // 1. Correctly calculate the total price
+        const total = cart.reduce((sum, item) => {
+            const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
+            return sum + (pricePerItem * item.quantity);
+        }, 0).toFixed(2);
 
-        const cartSummaryHTML = cart.map(item =>
-            `<div class="summary-cart-item">
-                <span>${item.quantity} x ${lang === 'de' ? item.product.name_de : item.product.name_en}</span>
-                <span>(${(item.product.price * item.quantity).toFixed(2)} €)</span>
-            </div>`
-        ).join('');
+        // 2. Correctly generate the HTML for each cart item
+        const cartSummaryHTML = cart.map(item => {
+            let displayQuantity = item.quantity;
+            if (item.size === 'half') {
+                displayQuantity = item.quantity * 0.5;
+            }
+
+            const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
+            const itemPrice = pricePerItem * item.quantity;
+
+            return `<div class="summary-cart-item">
+                        <span>${displayQuantity} x ${lang === 'de' ? item.product.name_de : item.product.name_en}</span>
+                        <span>(${itemPrice.toFixed(2)} €)</span>
+                    </div>`;
+        }).join('');
+        
+        // *** MODIFICATION END ***
 
         orderDetailsContainer.innerHTML = `
             <div class="summary-section">

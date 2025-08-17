@@ -22,11 +22,8 @@ const installAppBtn = document.getElementById('installAppBtn');
 // PWA Installation Logic
 // ===================================
 window.addEventListener('beforeinstallprompt', (event) => {
-    // Prevent the default browser prompt
     event.preventDefault();
-    // Stash the event so it can be triggered later.
     deferredInstallPrompt = event;
-    // Show our custom install button
     if (installAppBtn) {
         installAppBtn.style.display = 'inline-flex';
     }
@@ -35,18 +32,14 @@ window.addEventListener('beforeinstallprompt', (event) => {
 if (installAppBtn) {
     installAppBtn.addEventListener('click', () => {
         if (deferredInstallPrompt) {
-            // Show the browser's install prompt
             deferredInstallPrompt.prompt();
-            // Wait for the user to respond to the prompt
             deferredInstallPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
                     console.log('User accepted the install prompt');
                 } else {
                     console.log('User dismissed the install prompt');
                 }
-                // We can only use the prompt once, so clear it
                 deferredInstallPrompt = null;
-                // Hide the button
                 installAppBtn.style.display = 'none';
             });
         }
@@ -113,13 +106,16 @@ const translations = {
     pickupDateLabel: 'Abholdatum:', pickupTimeLabel: 'Abholzeit:',
     pickupTimeInvalid: 'Bitte wähle eine Abholzeit innerhalb der Öffnungszeiten (Mo-Sa: 7-19 Uhr, So: 8-12 Uhr).', pickupTimePast: 'Die gewählte Abholzeit liegt in der Vergangenheit.',
     addToCartBtn: 'Zum Warenkorb', yourCart: 'Dein Warenkorb', searchPlaceholder: 'Gib ein, was du suchst...', yourName: 'Dein Name', phoneNumber: 'Telefonnummer',
-    emailOptional: 'E-Mail (optional)', messageOptional: 'Nachricht (optional)', notProvided: 'Nicht angegeben', totalText: 'Gesamt:',
+    emailOptional: 'E-Mail (optional)', messageOptional: 'Nachricht (optional)', notProvided: '-', totalText: 'Gesamt:',
     prevPage: 'Zurück', nextPage: 'Weiter',
     holidayProductOnNonHolidayAlert: 'Ihre Bestellung enthält Artikel, die nur an Sonn- und Feiertagen erhältlich sind. Bitte wählen Sie einen entsprechenden Tag als Abholdatum.',
     phoneHint: "Bitte nur Zahlen, Leerzeichen oder '+' eingeben.",
     slicingTitle: "Schneide-Präferenz",
     slicingUnsliced: "Am Stück",
     slicingSliced: "Geschnitten",
+    sizeTitle: "Größe",
+    sizeWhole: "Ganzes",
+    sizeHalf: "Halbes",
     ingredientsTitle: "Zutaten & Allergene",
     nutritionTitle: "Nährwertangaben",
     viewDetailsBtn: "Details ansehen",
@@ -138,13 +134,16 @@ const translations = {
     pickupDateLabel: 'Pickup Date:', pickupTimeLabel: 'Pickup Time:',
     pickupTimeInvalid: 'Please select a pickup time within opening hours (Mon-Sat: 7 AM - 7 PM, Sun: 8 AM - 12 PM).', pickupTimePast: 'The selected pickup time is in the past.',
     addToCartBtn: 'Add to Cart', yourCart: 'Your Cart', searchPlaceholder: 'Enter what you are looking for...', yourName: 'Your Name', phoneNumber: 'Phone Number',
-    emailOptional: 'E-Mail (optional)', messageOptional: 'Message (optional)', notProvided: 'Not provided', totalText: 'Total:',
+    emailOptional: 'E-Mail (optional)', messageOptional: 'Message (optional)', notProvided: '-', totalText: 'Total:',
     prevPage: 'Previous', nextPage: 'Next',
     holidayProductOnNonHolidayAlert: 'Your order contains Sunday/Holiday-only items. Please select an appropriate day as your pickup date.',
     phoneHint: "Please only enter numbers, spaces, or '+'.",
     slicingTitle: "Slicing Preference",
     slicingUnsliced: "Unsliced",
     slicingSliced: "Sliced",
+    sizeTitle: "Size",
+    sizeWhole: "Whole",
+    sizeHalf: "Half",
     ingredientsTitle: "Ingredients (allergens are highlighted)",
     nutritionTitle: "Nutritional Information",
     viewDetailsBtn: "View Details",
@@ -152,7 +151,6 @@ const translations = {
   }
 };
 
-// ... the rest of your script.js remains the same ...
 const publicHolidays = ["01-01", "05-01", "10-03", "10-31", "12-25", "12-26"];
 
 function isPublicHoliday(date) {
@@ -205,8 +203,7 @@ function displayProducts() {
 
             const dietaryHtml = p.dietary ? `<div class="dietary-badge-card badge-${p.dietary}">${p.dietary}</div>` : '';
 
-            const cartItem = cart.find(item => item.product.id === p.id);
-            const quantityInCart = cartItem ? cartItem.quantity : 0;
+            const quantityInCart = cart.filter(item => item.product.id === p.id).reduce((sum, item) => sum + item.quantity, 0);
             
             card.innerHTML = `
                 <div class="product-image-container">
@@ -278,12 +275,17 @@ function changePage(page) {
     }, 100);
 }
 
+function updateModalPrice() {
+    if (!currentProductInModal) return;
+    document.getElementById('modalPrice').textContent = `${currentProductInModal.price.toFixed(2)} €`;
+}
+
 function openModal(productId) {
     const p = products.find(prod => prod.id === productId);
     if (!p) return;
     currentProductInModal = p;
-    const cartItem = cart.find(item => item.product.id === p.id);
-    document.getElementById('modalProductQuantity').value = cartItem ? cartItem.quantity : 1;
+
+    document.getElementById('modalProductQuantity').value = 1;
     document.getElementById('modalImg').src = p.img;
     document.getElementById('modalTitle').textContent = currentLang === 'de' ? p.name_de : p.name_en;
     
@@ -293,17 +295,8 @@ function openModal(productId) {
 
     let ingredientsString = currentLang === 'de' ? p.ingredients_de : p.ingredients_en;
     if (ingredientsString) {
-        let allergens = currentLang === 'de' ? p.allergen_de.split(', ') : p.allergen_en.split(', ');
-        
-        const allergenMap = {
-            'Gluten': ['Weizenmehl', 'Roggenmehl', 'Dinkelmehl', 'Gerstenmalzextrakt', 'Wheat flour', 'rye flour', 'spelt flour', 'barley malt extract'],
-            'Soja': ['Soja', 'Soy'],
-            'Milch': ['Milch', 'Butter', 'Joghurt', 'Quark', 'Dairy', 'milk', 'butter', 'yoghurt', 'quark'],
-            'Eier': ['Eier', 'Ei', 'Eggs', 'egg'],
-            'Sesam': ['Sesam', 'Sesame'],
-            'Nüsse': ['Walnüsse', 'Mandeln', 'Nuts', 'walnuts', 'almonds']
-        };
-
+        let allergens = (currentLang === 'de' ? p.allergen_de : p.allergen_en).split(', ');
+        const allergenMap = {'Gluten': ['Weizenmehl', 'Roggenmehl', 'Dinkelmehl', 'Gerstenmalzextrakt', 'Wheat flour', 'rye flour', 'spelt flour', 'barley malt extract'],'Soja': ['Soja', 'Soy'],'Milch': ['Milch', 'Butter', 'Joghurt', 'Quark', 'Dairy', 'milk', 'butter', 'yoghurt', 'quark'],'Eier': ['Eier', 'Ei', 'Eggs', 'egg'],'Sesam': ['Sesam', 'Sesame'],'Nüsse': ['Walnüsse', 'Mandeln', 'Nuts', 'walnuts', 'almonds']};
         allergens.forEach(allergen => {
             if (allergenMap[allergen]) {
                 allergenMap[allergen].forEach(ingredientWord => {
@@ -312,7 +305,6 @@ function openModal(productId) {
                 });
             }
         });
-
         ingredientsTextElement.innerHTML = ingredientsString;
         ingredientsContainer.style.display = 'block';
     } else {
@@ -337,14 +329,8 @@ function openModal(productId) {
     } else {
         modalDietary.style.display = 'none';
     }
-    document.getElementById('modalPrice').textContent = `${p.price.toFixed(2)} €`;
-    const slicingOptions = document.getElementById('slicingOptionsContainer');
-    if (p.category === 'bread') {
-        slicingOptions.style.display = 'block';
-        document.getElementById('sliceNo').checked = true;
-    } else {
-        slicingOptions.style.display = 'none';
-    }
+    
+    updateModalPrice();
     modal.style.display = 'flex';
     applyLanguage();
 }
@@ -417,7 +403,7 @@ function applyLanguage() {
         if (cartTextSpan) cartTextSpan.textContent = translation;
       } else if (key === 'installApp' && textSpan) {
         textSpan.textContent = translation;
-      } else if (icon) el.innerHTML = `${icon.outerHTML} ${translation}`;
+      } else if (icon && !el.classList.contains('social-icon')) el.innerHTML = `${icon.outerHTML} ${translation}`;
       else el.textContent = translation;
     }
   });
@@ -454,40 +440,39 @@ function updateProductCardUI(productId) {
     const productCard = document.querySelector(`.product[data-product-id='${productId}']`);
     if (productCard) {
         const quantityDisplay = productCard.querySelector('.quantity-display');
-        const cartItem = cart.find(item => item.product.id === productId);
+        const quantityInCart = cart.filter(item => item.product.id === productId).reduce((sum, item) => sum + item.quantity, 0);
         if (quantityDisplay) {
-            quantityDisplay.textContent = cartItem ? cartItem.quantity : 0;
+            quantityDisplay.textContent = quantityInCart > 0 ? quantityInCart : 0;
         }
-        productCard.classList.toggle('in-cart', !!cartItem && cartItem.quantity > 0);
+        productCard.classList.toggle('in-cart', quantityInCart > 0);
     }
 }
 
-function updateCartQuantity(productId, change) {
+function updateCartQuantity(productId, change, size = 'whole') {
     const product = products.find(p => p.id === productId);
     if (!product) return;
-    let existingItem = cart.find(item => item.product.id === productId);
+    
+    let existingItem = cart.find(item => item.product.id === productId && item.size === size);
     let itemAdded = false;
 
     if (existingItem) {
         existingItem.quantity += change;
         if (existingItem.quantity <= 0) {
-            cart = cart.filter(item => item.product.id !== productId);
+            cart = cart.filter(item => !(item.product.id === productId && item.size === size));
             showToast(currentLang === 'de' ? 'Artikel entfernt' : 'Item removed');
         } else if (change > 0) {
-            const productName = currentLang === 'de' ? product.name_de : product.name_en;
-            showToast(`${productName} ${currentLang === 'de' ? 'hinzugefügt' : 'added'}`, 'success');
             itemAdded = true;
         }
     } else if (change > 0) {
-        const newItem = { product, quantity: change };
+        const newItem = { product, quantity: change, size: size };
         if (product.category === 'bread') newItem.slicing = 'unsliced';
         cart.push(newItem);
-        const productName = currentLang === 'de' ? product.name_de : product.name_en;
-        showToast(`${productName} ${currentLang === 'de' ? 'hinzugefügt' : 'added'}`, 'success');
         itemAdded = true;
     }
 
     if (itemAdded) {
+        const productName = currentLang === 'de' ? product.name_de : product.name_en;
+        showToast(`${productName} ${currentLang === 'de' ? 'hinzugefügt' : 'added'}`, 'success');
         const cartButton = document.getElementById('cartButton');
         cartButton.classList.remove('jiggle');
         void cartButton.offsetWidth;
@@ -501,37 +486,29 @@ function updateCartQuantity(productId, change) {
 function addToCartFromModal() {
   if (!currentProductInModal) return;
   const quantity = parseInt(document.getElementById('modalProductQuantity').value);
-  if (isNaN(quantity) || quantity < 0) {
+  if (isNaN(quantity) || quantity < 1) {
     showToast(translations[currentLang].selectProductQuantityAlert, 'error');
     return;
   }
-  const itemInCart = cart.find(item => item.product.id === currentProductInModal.id);
-  let slicingChoice = null;
-  if (currentProductInModal.category === 'bread') {
-      slicingChoice = document.querySelector('input[name="slicing"]:checked').value;
-  }
+  
+  const size = 'whole';
+  const slicingChoice = 'unsliced';
+  
+  let itemInCart = cart.find(item => item.product.id === currentProductInModal.id && item.size === size);
   
   if (itemInCart) {
-      if (quantity <= 0) {
-          cart = cart.filter(item => item.product.id !== currentProductInModal.id);
-      } else {
-          itemInCart.quantity = quantity;
-          itemInCart.slicing = slicingChoice;
-      }
-  } else if (quantity > 0) {
-      cart.push({ product: currentProductInModal, quantity, slicing: slicingChoice });
+      itemInCart.quantity += quantity;
+  } else {
+      cart.push({ product: currentProductInModal, quantity, slicing: slicingChoice, size });
   }
 
-  if (quantity > 0) {
-    const productName = currentLang === 'de' ? currentProductInModal.name_de : currentProductInModal.name_en;
-    showToast(`${productName} ${currentLang === 'de' ? 'hinzugefügt' : 'added'}`, 'success');
-    const cartButton = document.getElementById('cartButton');
-    cartButton.classList.remove('jiggle');
-    void cartButton.offsetWidth;
-    cartButton.classList.add('jiggle');
-  } else {
-    showToast(currentLang === 'de' ? 'Artikel entfernt' : 'Item removed');
-  }
+  const productName = currentLang === 'de' ? currentProductInModal.name_de : currentProductInModal.name_en;
+  showToast(`${quantity} x ${productName} ${currentLang === 'de' ? 'hinzugefügt' : 'added'}`, 'success');
+  const cartButton = document.getElementById('cartButton');
+  cartButton.classList.remove('jiggle');
+  void cartButton.offsetWidth;
+  cartButton.classList.add('jiggle');
+  
   updateCartCount();
   updateProductCardUI(currentProductInModal.id);
   closeModal();
@@ -541,6 +518,27 @@ function updateSlicingPreference(itemIndex, newPreference) {
     if (cart[itemIndex]) {
         cart[itemIndex].slicing = newPreference;
         localStorage.setItem('cart', JSON.stringify(cart));
+        renderCartItems();
+    }
+}
+
+function updateSizePreference(itemIndex, newSize) {
+    if (cart[itemIndex]) {
+        const oldItem = cart[itemIndex];
+        const existingItemWithNewSize = cart.find((item, index) => 
+            item.product.id === oldItem.product.id && item.size === newSize && index !== itemIndex
+        );
+
+        if (existingItemWithNewSize) {
+            existingItemWithNewSize.quantity += oldItem.quantity;
+            cart.splice(itemIndex, 1);
+        } else {
+            oldItem.size = newSize;
+        }
+        
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCartItems();
+        updateProductCardUI(oldItem.product.id);
     }
 }
 
@@ -567,13 +565,28 @@ function renderCartItems() {
   } else {
     totalContainer.style.display = 'flex';
     cart.forEach((item, index) => {
-      const itemPrice = item.product.price * item.quantity;
+      const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
+      const itemPrice = pricePerItem * item.quantity;
       totalPrice += itemPrice;
-      let optionElement = '';
+
+      let optionsHtml = '';
+      
+      if (item.product.canBeHalved) {
+          const wholeText = translations[currentLang].sizeWhole;
+          const halfText = translations[currentLang].sizeHalf;
+          optionsHtml += `
+            <div class="cart-item-slicing-group">
+                <input type="radio" id="sizeWhole-${index}" name="size-${item.product.id}" value="whole" onchange="updateSizePreference(${index}, this.value)" ${item.size === 'whole' ? 'checked' : ''}>
+                <label for="sizeWhole-${index}">${wholeText}</label>
+                <input type="radio" id="sizeHalf-${index}" name="size-${item.product.id}" value="half" onchange="updateSizePreference(${index}, this.value)" ${item.size === 'half' ? 'checked' : ''}>
+                <label for="sizeHalf-${index}">${halfText}</label>
+            </div>`;
+      }
+      
       if (item.product.category === 'bread') {
           const unslicedText = translations[currentLang].slicingUnsliced;
           const slicedText = translations[currentLang].slicingSliced;
-          optionElement = `
+          optionsHtml += `
             <div class="cart-item-slicing-group">
                 <input type="radio" id="sliceNo-${index}" name="slicing-${index}" value="unsliced" onchange="updateSlicingPreference(${index}, this.value)" ${item.slicing === 'unsliced' ? 'checked' : ''}>
                 <label for="sliceNo-${index}">${unslicedText}</label>
@@ -581,11 +594,12 @@ function renderCartItems() {
                 <label for="sliceYes-${index}">${slicedText}</label>
             </div>`;
       }
+      
       selectedProductsList.innerHTML += `
         <div class="cart-item-row">
           <div class="cart-item-details">
             <span>${currentLang === 'de' ? item.product.name_de : item.product.name_en} × ${item.quantity} (${itemPrice.toFixed(2)} €)</span>
-            ${optionElement}
+            ${optionsHtml}
           </div>
           <button type="button" aria-label="Remove item" onclick="removeFromCart(${index})">✖</button>
         </div>`;
@@ -687,15 +701,31 @@ function submitOrder(event) {
     const orderId = generateOrderId();
     const lastOrder = { orderId, name, phone, pickupDate, pickupTime, cart };
     localStorage.setItem('lastOrder', JSON.stringify(lastOrder));
+    
     const cartSummary = cart.map(item => {
         let optionText = '';
         if (item.slicing) {
             const key = item.slicing === 'sliced' ? 'slicingSliced' : 'slicingUnsliced';
-            optionText = ` (${translations[currentLang][key]})`;
+            optionText += ` (${translations[currentLang][key]})`;
         }
-        return `${item.quantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en}${optionText} (${(item.product.price * item.quantity).toFixed(2)} €)`;
+
+        // *** THIS IS THE NEW LOGIC FOR THE EMAIL TEXT ***
+        let displayQuantity = item.quantity;
+        if (item.size === 'half') {
+            displayQuantity = item.quantity * 0.5;
+        }
+
+        const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
+        const itemPrice = pricePerItem * item.quantity;
+        
+        return `${displayQuantity} x ${currentLang === 'de' ? item.product.name_de : item.product.name_en}${optionText} (${itemPrice.toFixed(2)} €)`;
     }).join('\n');
-    const total = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0).toFixed(2);
+    
+    const total = cart.reduce((sum, item) => {
+        const pricePerItem = (item.size === 'half' && item.product.price_half) ? item.product.price_half : item.product.price;
+        return sum + (pricePerItem * item.quantity);
+    }, 0).toFixed(2);
+
     const emailBody = `
 Bestellnummer: ${orderId}
 --------------------------------
@@ -710,7 +740,7 @@ Gesamt: ${total} €
 Nachricht: ${userMessage}`;
     const dataToSend = new FormData();
     dataToSend.append('access_key', formData.get('access_key'));
-    dataToSend.append('subject', `Neue Bäckerei-Bestellung #${orderId} von ${name}`);
+    dataToSend.append('subject', ` Bestellung : #${orderId} `);
     dataToSend.append('from_name', name);
     dataToSend.append('text', emailBody);
     submitBtn.disabled = true;
@@ -755,15 +785,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     productGrid.addEventListener('click', (event) => {
         const target = event.target;
+        
         if (target.matches('.quantity-btn')) {
-            const action = target.dataset.action;
             const productId = parseInt(target.dataset.productId);
-            if (action === 'increase') updateCartQuantity(productId, 1);
-            else if (action === 'decrease') updateCartQuantity(productId, -1);
+            const action = target.dataset.action;
+            
+            if (action === 'increase') {
+                updateCartQuantity(productId, 1, 'whole'); 
+            } else if (action === 'decrease') {
+                updateCartQuantity(productId, -1, 'whole');
+            }
             return;
         }
+
         const productCard = target.closest('.product');
-        if (productCard) openModal(parseInt(productCard.dataset.productId));
+        if (productCard) {
+            const productId = parseInt(productCard.dataset.productId);
+            openModal(productId);
+        }
     });
 
     document.getElementById('orderForm').addEventListener('submit', submitOrder);

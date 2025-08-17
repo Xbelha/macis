@@ -174,10 +174,16 @@ header p {
     position: absolute;
     top: 20px;
     left: 20px;
+    right: 20px; /* Make it span the full width */
     z-index: 10;
     display: flex;
-    gap: 10px;
+    justify-content: space-between; /* This will push children to opposite ends */
     align-items: center;
+    pointer-events: none; /* Allow clicks to pass through the container */
+}
+
+.lang-switch, .install-btn-container {
+    pointer-events: auto; /* Re-enable clicks on the children */
 }
 
 .lang-switch {
@@ -787,19 +793,21 @@ main { padding-top: 20px; }
     gap: 10px;
 }
 
-/* UPDATED SLICING BUTTONS STYLE */
 .cart-item-slicing-group {
     display: flex;
     gap: 8px;
-    flex-wrap: nowrap; /* Keep buttons on one line */
+    flex-wrap: nowrap;
     width: 100%;
-    max-width: 280px; /* Give them a max width */
+    max-width: 280px;
 }
 .cart-item-slicing-group input[type="radio"] {
     display: none;
 }
 .cart-item-slicing-group label {
-    padding: 6px 14px;
+    padding: 0 14px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
     font-size: 0.85rem;
     font-weight: 500;
     border: 1px solid var(--border-color);
@@ -807,8 +815,7 @@ main { padding-top: 20px; }
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-    flex-grow: 1; /* Make buttons share space equally */
-    text-align: center;
+    /* THIS IS THE FIX: The flex-grow property that caused stretching has been removed */
 }
 .cart-item-slicing-group input[type="radio"]:not(:checked) + label:hover {
     border-color: var(--accent-color);
@@ -934,7 +941,7 @@ footer {
     }
     header h1 { font-size: 3.5rem; }
     header p { font-size: 1.2rem; }
-    .header-controls { left: 15px; top: 15px; }
+    .header-controls { left: 15px; top: 15px; right: 15px; }
     
     .filter-controls {
         border: none;
