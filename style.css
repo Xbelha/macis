@@ -787,10 +787,13 @@ main { padding-top: 20px; }
     gap: 10px;
 }
 
+/* UPDATED SLICING BUTTONS STYLE */
 .cart-item-slicing-group {
     display: flex;
     gap: 8px;
-    flex-wrap: wrap; /* MOBILE FIX: Allow buttons to wrap */
+    flex-wrap: nowrap; /* Keep buttons on one line */
+    width: 100%;
+    max-width: 280px; /* Give them a max width */
 }
 .cart-item-slicing-group input[type="radio"] {
     display: none;
@@ -804,8 +807,10 @@ main { padding-top: 20px; }
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    flex-grow: 1; /* Make buttons share space equally */
+    text-align: center;
 }
-.cart-item-slicing-group input[type="radio"]:not(:checked) + label:hover {
+.cart-item-splicing-group input[type="radio"]:not(:checked) + label:hover {
     border-color: var(--accent-color);
     color: var(--accent-color);
 }
@@ -1001,14 +1006,6 @@ footer {
     .modal-add-to-cart { flex-direction: column; gap: 15px; }
     .modal-add-to-cart .modal-action-row { flex-direction: column; gap: 12px; width: 100%;}
     .modal-add-to-cart input, .modal-add-to-cart button { width: 100%; max-width: 220px; }
-
-    .cart-item-slicing-group {
-        gap: 5px;
-    }
-    .cart-item-slicing-group label {
-        padding: 5px 10px;
-        font-size: 0.8rem;
-    }
 }
 .search-bar-wrapper {
   position: relative;
